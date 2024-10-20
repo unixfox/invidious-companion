@@ -12,7 +12,7 @@ let innertubeClient = await Innertube.create({ retrieve_player: false });
 
 innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
 
-Deno.cron("regenerate poToken", konfigStore.get("jobs.po_token_cron"), async () => {
+Deno.cron("regenerate poToken", konfigStore.get("jobs.po_token_cron") as string, async () => {
   innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
 });
 
