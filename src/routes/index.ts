@@ -1,19 +1,23 @@
 import { Hono } from "hono";
-import { bearerAuth } from "hono/bearer-auth";
 import { logger } from "hono/logger";
-import config from 'node-config';
+import { Store } from "@willsoto/node-konfig-core";
+import { bearerAuth } from "hono/bearer-auth";
 
-import youtube_route_player from "./youtube_routes/player.ts";
+import youtubeApiPlayer from "./youtube_api_routes/player.ts";
+import invidiousRouteLatestVersion from "./invidious_routes/latestVersion.ts";
+import invidiousRouteDashManifest from "./invidious_routes/dashManifest.ts";
 
-export const routes = (app: Hono) => {
+export const routes = (app: Hono, konfigStore: Store<Record<string, unknown>>) => {
   app.use("*", logger());
 
   app.use(
     "/youtubei/v1/*",
     bearerAuth({
-      token: config.get("server.hmac_key"),
+      token: konfigStore.get("server.hmac_key") as string,
     }),
   );
 
-  app.route("/youtubei/v1", youtube_route_player);
+  app.route("/youtubei/v1", youtubeApiPlayer);
+  app.route("/latest_version", invidiousRouteLatestVersion);
+  app.route("/api/manifest/dash/id", invidiousRouteDashManifest);
 };

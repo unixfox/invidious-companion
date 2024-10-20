@@ -2,9 +2,13 @@
 port = 8282
 host = "127.0.0.1"
 hmac_key = "CHANGE_ME"
+base_url = "http://localhost:8282"
 
 [cache]
 enabled = true
 
 [networking]
 #proxy = ""
+
+[jobs]
+po_token_cron = "0 * * * *"

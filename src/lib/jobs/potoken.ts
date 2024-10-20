@@ -2,12 +2,13 @@ import { BG } from "bgutils";
 import type { BgConfig } from "bgutils";
 import { JSDOM } from "jsdom";
 import { Innertube, UniversalCache } from "youtubei.js";
-import Config from "node-config";
+import { Store } from "@willsoto/node-konfig-core";
 
+// Adapted from https://github.com/LuanRT/BgUtils/blob/main/examples/node/index.ts
 export const poTokenGenerate = async (
     innertubeClient: Innertube,
-    config: Config,
-) => {
+    konfigStore: Store<Record<string, unknown>>,
+): Promise<Innertube> => {
     const requestKey = "O43z0dpjhgX20SCx4KAo";
 
     if (innertubeClient.session.po_token) {
@@ -58,14 +59,14 @@ export const poTokenGenerate = async (
 
     let fetchMethod = fetch;
 
-    if (config.has("networking.proxy")) {
+    if (konfigStore.get("networking.proxy")) {
         fetchMethod = async (
             input: RequestInfo | URL,
             init?: RequestInit,
         ) => {
             const client = Deno.createHttpClient({
                 proxy: {
-                    url: config.get("networking.proxy"),
+                    url: konfigStore.get("networking.proxy") as string,
                 },
             });
             const fetchRes = await fetch(input, {

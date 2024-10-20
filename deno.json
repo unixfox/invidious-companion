@@ -4,15 +4,15 @@
     "compile": "deno compile --output invidious_companion --allow-net --allow-env --allow-sys=hostname --allow-read src/main.ts"
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@1",
     "hono": "jsr:@hono/hono@^4.6.5",
     "hono/logger": "jsr:@hono/hono@^4.6.5/logger",
     "hono/bearer-auth": "jsr:@hono/hono@^4.6.5/bearer-auth",
     "youtubei.js": "npm:youtubei.js@10.5.0/web",
     "jsdom": "https://esm.sh/jsdom@25.0.1",
     "bgutils": "https://esm.sh/bgutils-js@3.0.0",
-    "node-config": "npm:config@3.3.12",
-    "toml": "npm:toml@3.0.0",
+    "@willsoto/node-konfig-core": "https://esm.sh/@willsoto/node-konfig-core@5.0.0",
+    "@willsoto/node-konfig-file": "https://esm.sh/@willsoto/node-konfig-file@3.0.0",
+    "@willsoto/node-konfig-toml-parser": "https://esm.sh/@willsoto/node-konfig-toml-parser@3.0.0",
     "youtubePlayerReq": "./src/lib/helpers/youtubePlayerReq.ts"
   },
   "unstable": ["cron", "kv", "http"]
