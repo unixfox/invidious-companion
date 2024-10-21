@@ -11,4 +11,4 @@ enabled = true
 #proxy = ""
 
 [jobs]
-po_token_cron = "0 * * * *"
+po_token_cron = "*/5 * * * *"
