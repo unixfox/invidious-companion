@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import { Innertube } from "youtubei.js";
 import { HonoVariables } from "../../lib/types/HonoVariables.ts";
 import { Store } from "@willsoto/node-konfig-core";
@@ -44,18 +43,37 @@ dashManifest.get("/:videoId", async (c) => {
             .filter((i) => i.mime_type.includes("mp4"));
 
         const dashFile = await videoInfo.toDash(
-            (url) => {
-                if (local) {
-                    const dashUrl = url.pathname + url.search + "&host=" +
-                        url.host;
-                    // Can't create URL type without host part
-                    return dashUrl as unknown as URL;
-                } else {
-                    return url;
+            // @ts-ignore URL is the same type as URLTransformer
+            (url: URL) => {
+                const selectedItagFormat = videoInfo.streaming_data
+                    ?.adaptive_formats?.filter((i) => {
+                        if (
+                            i.itag == Number(url.searchParams.get("itag")) &&
+                            i.is_drc === undefined
+                        ) {
+                            return true;
+                        } else if (
+                            i.itag == Number(url.searchParams.get("itag")) &&
+                            i.is_drc === url.search.includes("drc")
+                        ) {
+                            return true;
+                        }
+                    });
+                if (selectedItagFormat) {
+                    let dashUrl = new URL(selectedItagFormat[0].url as string);
+                    if (local) {
+                        // Can't create URL type without host part
+                        dashUrl =
+                            (dashUrl.pathname + dashUrl.search + "&host=" +
+                                dashUrl.host) as unknown as URL;
+                        return dashUrl;
+                    } else {
+                        return dashUrl;
+                    }
                 }
             },
         );
-        return c.text(dashFile);
+        return c.text(dashFile.replaceAll("&amp;", "&"));
     }
 });
 
