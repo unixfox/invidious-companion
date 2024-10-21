@@ -86,7 +86,7 @@ export const youtubePlayerParsing = async (
             },
         }))(videoData);
 
-        if (konfigStore.get("cache.enabled") == true) {
+        if (konfigStore.get("cache.enabled") == true && videoData.playabilityStatus?.status == "OK") {
             (async () => {
                 await kv.set(
                     ["video_cache", videoId],
