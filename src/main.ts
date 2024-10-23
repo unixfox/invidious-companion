@@ -13,13 +13,15 @@ let innertubeClient: Innertube;
 if (konfigStore.get("jobs.po_token.enabled") as boolean) {
   innertubeClient = await Innertube.create({ retrieve_player: false });
   innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+  Deno.cron("regenerate poToken", konfigStore.get("jobs.youtube_session.frequency") as string, async () => {
+    innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+  });
 } else {
   await Innertube.create();
+  Deno.cron("regenerate visitordata", konfigStore.get("jobs.youtube_session.frequency") as string, async () => {
+    innertubeClient = await Innertube.create();
+  });
 }
-
-Deno.cron("regenerate poToken", konfigStore.get("jobs.po_token.frequency") as string, async () => {
-  innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
-});
 
 app.use("*", async (c, next) => {
   // @ts-ignore Do not understand how to fix this error.
