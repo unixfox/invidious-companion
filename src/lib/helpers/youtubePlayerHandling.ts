@@ -32,35 +32,38 @@ export const youtubePlayerParsing = async (
 
         // Modify the original YouTube response to include deciphered URLs
         if (streamingData && videoData && videoData.streamingData) {
-            streamingData.adaptive_formats;
-            for (const [index, format] of streamingData.formats.entries()) {
-                videoData.streamingData.formats[index].url = format.decipher(
-                    innertubeClient.session.player,
-                );
-                if (
-                    videoData.streamingData.formats[index].signatureCipher !==
-                        undefined
-                ) {
-                    delete videoData.streamingData.formats[index]
-                        .signatureCipher;
+            const ecatcherServiceTracking = videoData.responseContext?.serviceTrackingParams.find(o => o.service === 'ECATCHER');
+            const clientNameUsed = ecatcherServiceTracking?.params?.find(o => o.key === 'client.name');
+            if (clientNameUsed?.value.includes("IOS") || clientNameUsed?.value.includes("ANDROID")) {
+                for (const [index, format] of streamingData.formats.entries()) {
+                    videoData.streamingData.formats[index].url = format.decipher(
+                        innertubeClient.session.player,
+                    );
+                    if (
+                        videoData.streamingData.formats[index].signatureCipher !==
+                            undefined
+                    ) {
+                        delete videoData.streamingData.formats[index]
+                            .signatureCipher;
+                    }
                 }
-            }
-            for (
-                const [index, adaptive_format] of streamingData.adaptive_formats
-                    .entries()
-            ) {
-                videoData.streamingData.adaptiveFormats[index].url =
-                    adaptive_format
-                        .decipher(
-                            innertubeClient.session.player,
-                        );
-                if (
-                    videoData.streamingData.adaptiveFormats[index]
-                        .signatureCipher !==
-                        undefined
+                for (
+                    const [index, adaptive_format] of streamingData.adaptive_formats
+                        .entries()
                 ) {
-                    delete videoData.streamingData.adaptiveFormats[index]
-                        .signatureCipher;
+                    videoData.streamingData.adaptiveFormats[index].url =
+                        adaptive_format
+                            .decipher(
+                                innertubeClient.session.player,
+                            );
+                    if (
+                        videoData.streamingData.adaptiveFormats[index]
+                            .signatureCipher !==
+                            undefined
+                    ) {
+                        delete videoData.streamingData.adaptiveFormats[index]
+                            .signatureCipher;
+                    }
                 }
             }
         }
