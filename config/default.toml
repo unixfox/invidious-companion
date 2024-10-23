@@ -11,6 +11,7 @@ enabled = true
 #proxy = ""
 
 [jobs]
-[youtube_session]
+
+[jobs.youtube_session]
 po_token_enabled = true
 frequency = "*/5 * * * *"

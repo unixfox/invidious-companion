@@ -10,7 +10,7 @@ const konfigStore = await konfigLoader();
 
 let innertubeClient: Innertube;
 
-if (konfigStore.get("jobs.po_token.enabled") as boolean) {
+if (konfigStore.get("jobs.youtube_session.enabled") as boolean) {
   innertubeClient = await Innertube.create({ retrieve_player: false });
   innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
   Deno.cron("regenerate poToken", konfigStore.get("jobs.youtube_session.frequency") as string, async () => {
