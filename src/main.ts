@@ -8,11 +8,16 @@ const app = new Hono();
 
 const konfigStore = await konfigLoader();
 
-let innertubeClient = await Innertube.create({ retrieve_player: false });
+let innertubeClient: Innertube;
 
-innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+if (konfigStore.get("jobs.po_token.enabled") as boolean) {
+  innertubeClient = await Innertube.create({ retrieve_player: false });
+  innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+} else {
+  await Innertube.create();
+}
 
-Deno.cron("regenerate poToken", konfigStore.get("jobs.po_token_cron") as string, async () => {
+Deno.cron("regenerate poToken", konfigStore.get("jobs.po_token.frequency") as string, async () => {
   innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
 });
 
