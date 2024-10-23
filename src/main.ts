@@ -17,7 +17,7 @@ if (konfigStore.get("jobs.youtube_session.enabled") as boolean) {
     innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
   });
 } else {
-  await Innertube.create();
+  innertubeClient = await Innertube.create();
   Deno.cron("regenerate visitordata", konfigStore.get("jobs.youtube_session.frequency") as string, async () => {
     innertubeClient = await Innertube.create();
   });
