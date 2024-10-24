@@ -34,7 +34,7 @@ export const youtubePlayerParsing = async (
         if (streamingData && videoData && videoData.streamingData) {
             const ecatcherServiceTracking = videoData.responseContext?.serviceTrackingParams.find(o => o.service === 'ECATCHER');
             const clientNameUsed = ecatcherServiceTracking?.params?.find(o => o.key === 'client.name');
-            if (clientNameUsed?.value.includes("IOS") || clientNameUsed?.value.includes("ANDROID")) {
+            if (!clientNameUsed?.value.includes("IOS") && !clientNameUsed?.value.includes("ANDROID")) {
                 for (const [index, format] of streamingData.formats.entries()) {
                     videoData.streamingData.formats[index].url = format.decipher(
                         innertubeClient.session.player,
