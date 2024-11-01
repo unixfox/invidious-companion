@@ -3,6 +3,7 @@ import type { BgConfig } from "bgutils";
 import { JSDOM } from "jsdom";
 import { Innertube, UniversalCache } from "youtubei.js";
 import { Store } from "@willsoto/node-konfig-core";
+import { getFetchClient } from "../helpers/getFetchClient.ts";
 
 // Adapted from https://github.com/LuanRT/BgUtils/blob/main/examples/node/index.ts
 export const poTokenGenerate = async (
@@ -55,37 +56,12 @@ export const poTokenGenerate = async (
         bgConfig,
     });
 
-    await BG.PoToken.generatePlaceholder(visitorData);
-
-    let fetchMethod = fetch;
-
-    if (konfigStore.get("networking.proxy")) {
-        fetchMethod = async (
-            input: RequestInfo | URL,
-            init?: RequestInit,
-        ) => {
-            const client = Deno.createHttpClient({
-                proxy: {
-                    url: konfigStore.get("networking.proxy") as string,
-                },
-            });
-            const fetchRes = await fetch(input, {
-                client,
-                headers: init?.headers,
-                method: init?.method,
-                body: init?.body,
-            });
-            return new Response(fetchRes.body, {
-                status: fetchRes.status,
-                headers: fetchRes.headers,
-            });
-        };
-    }
+    await BG.PoToken.generatePlaceholder(visitorData);;
 
     return (await Innertube.create({
         po_token: poTokenResult.poToken,
         visitor_data: visitorData,
-        fetch: fetchMethod,
+        fetch: getFetchClient(konfigStore),
         cache: new UniversalCache(true),
         generate_session_locally: true,
     }));

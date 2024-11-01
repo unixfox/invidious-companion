@@ -18,6 +18,7 @@ export const konfigLoader = async (): Promise<
     };
 
     if (existsSync(pathJoin(Deno.cwd(), "config/local.toml"))) {
+        console.log("[INFO] Using custom settings local file.")
         konfigFilesToLoad.files.push({
             path: pathJoin(Deno.cwd(), "config/local.toml"),
             parser: new TOMLParser(),

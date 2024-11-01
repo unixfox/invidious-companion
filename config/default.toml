@@ -15,3 +15,7 @@ enabled = true
 [jobs.youtube_session]
 po_token_enabled = true
 frequency = "*/5 * * * *"
+
+[youtube_session]
+oauth_enabled = false
+cookies = ""

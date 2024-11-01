@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-env --allow-read --allow-sys=hostname --watch src/main.ts",
+    "dev": "deno run --allow-net --allow-env --allow-read --allow-sys=hostname --allow-write=./,/tmp/youtubei.js --watch src/main.ts",
     "compile": "deno compile --output invidious_companion --allow-net --allow-env --allow-sys=hostname --allow-read src/main.ts"
   },
   "imports": {
@@ -8,6 +8,7 @@
     "hono/logger": "jsr:@hono/hono@^4.6.5/logger",
     "hono/bearer-auth": "jsr:@hono/hono@^4.6.5/bearer-auth",
     "youtubei.js": "https://deno.land/x/youtubei@v11.0.1-deno/deno.ts",
+    "youtubei.js/endpoints": "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/core/endpoints/index.ts",
     "jsdom": "https://esm.sh/jsdom@25.0.1",
     "bgutils": "https://esm.sh/bgutils-js@3.0.0",
     "estree": "npm:@types/estree",

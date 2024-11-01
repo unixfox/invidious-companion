@@ -10,15 +10,18 @@ export const youtubePlayerParsing = async (
     videoId: string,
     konfigStore: Store,
 ): Promise<object> => {
+    const cacheEnabled = konfigStore.get("cache.enabled");
+
     const videoCached = (await kv.get(["video_cache", videoId]))
         .value as Uint8Array;
 
-    if (videoCached != null) {
+    if (videoCached != null && cacheEnabled == true) {
         return JSON.parse(new TextDecoder().decode(decompress(videoCached)));
     } else {
         const youtubePlayerResponse = await youtubePlayerReq(
             innertubeClient,
             videoId,
+            konfigStore
         );
         const videoData = youtubePlayerResponse.data;
 
@@ -34,6 +37,7 @@ export const youtubePlayerParsing = async (
         if (streamingData && videoData && videoData.streamingData) {
             const ecatcherServiceTracking = videoData.responseContext?.serviceTrackingParams.find(o => o.service === 'ECATCHER');
             const clientNameUsed = ecatcherServiceTracking?.params?.find(o => o.key === 'client.name');
+            // no need to decipher on IOS nor ANDROID
             if (!clientNameUsed?.value.includes("IOS") && !clientNameUsed?.value.includes("ANDROID")) {
                 for (const [index, format] of streamingData.formats.entries()) {
                     videoData.streamingData.formats[index].url = format.decipher(
@@ -89,7 +93,7 @@ export const youtubePlayerParsing = async (
             },
         }))(videoData);
 
-        if (konfigStore.get("cache.enabled") == true && videoData.playabilityStatus?.status == "OK") {
+        if (cacheEnabled == true && videoData.playabilityStatus?.status == "OK") {
             (async () => {
                 await kv.set(
                     ["video_cache", videoId],

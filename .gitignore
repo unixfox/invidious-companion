@@ -40,3 +40,4 @@ Untitled*.ipynb
 invidious_companion
 test_things/
 config/local.toml
+.cache/

@@ -7,6 +7,9 @@
       "jsr:@std/fs": "jsr:@std/fs@1.0.4",
       "jsr:@std/path": "jsr:@std/path@1.0.6",
       "jsr:@std/path@^1.0.6": "jsr:@std/path@1.0.6",
+      "npm:@types/estree": "npm:@types/estree@1.0.6",
+      "npm:@types/estree@^1.0.6": "npm:@types/estree@1.0.6",
+      "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@willsoto/node-konfig-core@5.0.0": "npm:@willsoto/node-konfig-core@5.0.0",
       "npm:@willsoto/node-konfig-file@3.0.0": "npm:@willsoto/node-konfig-file@3.0.0_@willsoto+node-konfig-core@5.0.0",
       "npm:@willsoto/node-konfig-toml-parser@3.0.0": "npm:@willsoto/node-konfig-toml-parser@3.0.0_@willsoto+node-konfig-core@5.0.0",
@@ -19,6 +22,7 @@
       "@luanrt/jintr@3.0.2": {
         "integrity": "3b3bcf6af55f3c410fe575e11f1c5c1e738e5253df05169a5436848d7996d383",
         "dependencies": [
+          "npm:@types/estree@^1.0.6",
           "npm:acorn@^8.8.0"
         ]
       },
@@ -33,6 +37,14 @@
       }
     },
     "npm": {
+      "@types/estree@1.0.6": {
+        "integrity": "sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==",
+        "dependencies": {}
+      },
+      "@types/node@18.16.19": {
+        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
+        "dependencies": {}
+      },
       "@willsoto/node-konfig-core@5.0.0": {
         "integrity": "sha512-1AevWxJw/9oGz53YpabBSYhNTY1fsSIxiWd6ehSLCPnlgZ1ciJy6ZcwMpAb5L86dMjFHYwTa4Z8HiOP6iHyi+Q==",
         "dependencies": {
@@ -70,6 +82,9 @@
         "dependencies": {}
       }
     }
+  },
+  "redirects": {
+    "https://deno.land/x/youtubei/deno.ts": "https://deno.land/x/youtubei@v11.0.1-deno/deno.ts"
   },
   "remote": {
     "https://deno.land/std@0.159.0/encoding/ascii85.ts": "f2b9cb8da1a55b3f120d3de2e78ac993183a4fd00dfa9cb03b51cf3a75bc0baa",
@@ -652,10 +667,12 @@
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/platform/lib.ts": "fdac76db7d9f1c13039036f590270fe7860396a8afb24eac078122d91b4d6742",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/platform/polyfills/web-crypto.ts": "ae20ed00dea9eafca9ba590f4fa440299cbd57288add788c59cb19f3455ae6d1",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/Cache.ts": "06cd238bce7c9657055151587e36ee445e8236d54d27272124ced10ea7be0da4",
+    "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/DashOptions.ts": "cf694c112ab97d778b3df735ddc76fd16fd5ae0d49943e2cc580f1f986f63da6",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/Endpoints.ts": "341ebfabf7099f88fc88b017635333646588d4d3001508026508d25457de1725",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/FormatUtils.ts": "9b53aefca649747856fc1ab89bfd98a63d245292e6fd4f3e3f3e9f2e5529c848",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/Misc.ts": "1acb401f52b4cd85726764a7708354c887f6fdc575cc0e4b8cfad42376931bac",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/PlatformShim.ts": "06f656f0d2bc20980ef77148455b662af10fe4b0e48d41566bf28e471eea4be1",
+    "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/StreamingInfoOptions.ts": "8381b0723c3a96d42a8b28655209c13bbf6035846fb8cba5ad52d81b2cb560b4",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/types/index.ts": "0c861a21b15b858d47bb0dd45364354d8fb749ac3122ba586d140703fbba8e90",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/utils/Cache.ts": "fd90c88da32e9283adf065475a5cb4e680b5152a6bc06dd8a3dc9349358cab35",
     "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/utils/Constants.ts": "6a1df0f81e0ca26ac31830dfb7afd03a9e77a43c4f69c42992f45d11d7fe5f7a",
@@ -723,6 +740,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.6.5",
+      "npm:@types/estree",
       "npm:@willsoto/node-konfig-core@5.0.0",
       "npm:@willsoto/node-konfig-file@3.0.0",
       "npm:@willsoto/node-konfig-toml-parser@3.0.0"
