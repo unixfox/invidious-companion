@@ -26,6 +26,9 @@ COPY --from=builder /app/invidious_companion /app/
 COPY ./config/ /app/config/
 COPY --from=builder /tini /tini
 
+ENV PORT=8282 \
+    HOST=0.0.0.0
+
 # Copy passwd file for the non-privileged user from the user-stage
 COPY --from=user-stage /etc/passwd /etc/passwd
 

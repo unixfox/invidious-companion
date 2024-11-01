@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-env --allow-read --allow-sys=hostname --allow-write=./,/tmp/youtubei.js --watch src/main.ts",
-    "compile": "deno compile --output invidious_companion --allow-net --allow-env --allow-sys=hostname --allow-read src/main.ts"
+    "dev": "deno run --allow-net --allow-env --allow-sys=hostname --allow-write=/var/tmp/youtubei.js --watch src/main.ts",
+    "compile": "deno compile --output invidious_companion --allow-net --allow-env --allow-read --allow-sys=hostname --allow-write=/var/tmp/youtubei.js src/main.ts"
   },
   "imports": {
     "hono": "jsr:@hono/hono@^4.6.5",
@@ -9,9 +9,10 @@
     "hono/bearer-auth": "jsr:@hono/hono@^4.6.5/bearer-auth",
     "youtubei.js": "https://deno.land/x/youtubei@v11.0.1-deno/deno.ts",
     "youtubei.js/endpoints": "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/core/endpoints/index.ts",
+    "youtubei.js/Utils": "https://deno.land/x/youtubei@v11.0.1-deno/deno/src/utils/Utils.ts",
     "jsdom": "https://esm.sh/jsdom@25.0.1",
     "bgutils": "https://esm.sh/bgutils-js@3.0.0",
-    "estree": "npm:@types/estree",
+    "estree": "https://esm.sh/@types/estree@1.0.6",
     "@willsoto/node-konfig-core": "npm:@willsoto/node-konfig-core@5.0.0",
     "@willsoto/node-konfig-file": "npm:@willsoto/node-konfig-file@3.0.0",
     "@willsoto/node-konfig-toml-parser": "npm:@willsoto/node-konfig-toml-parser@3.0.0",

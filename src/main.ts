@@ -6,11 +6,9 @@ import { konfigLoader } from "./lib/helpers/konfigLoader.ts";
 import { getFetchClient } from "./lib/helpers/getFetchClient.ts";
 
 const app = new Hono();
-
 const konfigStore = await konfigLoader();
 
 let innertubeClient: Innertube;
-let innertubeClientUniversalCache = true;
 let innertubeClientFetchPlayer = true;
 const innertubeClientOauthEnabled = konfigStore.get(
   "youtube_session.oauth_enabled",
@@ -21,6 +19,12 @@ const innertubeClientJobPoTokenEnabled = konfigStore.get(
 const innertubeClientCookies = konfigStore.get(
   "jobs.youtube_session.cookies",
 ) as string;
+let innertubeClientCache = new UniversalCache(
+  true,
+  konfigStore.get('cache.directory') as string + "/youtubei.js/",
+) as UniversalCache;
+
+Deno.env.set('TMPDIR', konfigStore.get("cache.directory") as string)
 
 if (!innertubeClientOauthEnabled) {
   if (innertubeClientJobPoTokenEnabled) {
@@ -32,29 +36,37 @@ if (!innertubeClientOauthEnabled) {
   }
 } else if (innertubeClientOauthEnabled) {
   // Can't use cache if using OAuth#cacheCredentials
-  innertubeClientUniversalCache = false;
+  innertubeClientCache = new UniversalCache(false);
 }
 
 innertubeClient = await Innertube.create({
-  cache: new UniversalCache(innertubeClientUniversalCache),
+  cache: innertubeClientCache,
   retrieve_player: innertubeClientFetchPlayer,
   fetch: getFetchClient(konfigStore),
-  cookie: innertubeClientCookies || undefined
+  cookie: innertubeClientCookies || undefined,
 });
 
 if (!innertubeClientOauthEnabled) {
   if (innertubeClientOauthEnabled) {
-    innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+    innertubeClient = await poTokenGenerate(
+      innertubeClient,
+      konfigStore,
+      innertubeClientCache as UniversalCache,
+    );
   }
   Deno.cron(
     "regenerate youtube session",
     konfigStore.get("jobs.youtube_session.frequency") as string,
     async () => {
       if (innertubeClientOauthEnabled) {
-        innertubeClient = await poTokenGenerate(innertubeClient, konfigStore);
+        innertubeClient = await poTokenGenerate(
+          innertubeClient,
+          konfigStore,
+          innertubeClientCache,
+        );
       } else {
         innertubeClient = await Innertube.create({
-          cache: new UniversalCache(innertubeClientUniversalCache),
+          cache: innertubeClientCache,
           retrieve_player: innertubeClientFetchPlayer,
         });
       }
@@ -62,8 +74,10 @@ if (!innertubeClientOauthEnabled) {
   );
 } else if (innertubeClientOauthEnabled) {
   // Fired when waiting for the user to authorize the sign in attempt.
-  innertubeClient.session.on('auth-pending', (data) => {
-    console.log(`Go to ${data.verification_url} in your browser and enter code ${data.user_code} to authenticate.`);
+  innertubeClient.session.on("auth-pending", (data) => {
+    console.log(
+      `Go to ${data.verification_url} in your browser and enter code ${data.user_code} to authenticate.`,
+    );
   });
   // Fired when authentication is successful.
   innertubeClient.session.on("auth", () => {
@@ -91,6 +105,6 @@ app.use("*", async (c, next) => {
 routes(app, konfigStore);
 
 Deno.serve({
-  port: konfigStore.get("server.port") as number,
-  hostname: konfigStore.get("server.host") as string,
+  port: Number(Deno.env.get("PORT")) || konfigStore.get("server.port") as number,
+  hostname: Deno.env.get("HOST") || konfigStore.get("server.host") as string,
 }, app.fetch);

@@ -740,7 +740,6 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.6.5",
-      "npm:@types/estree",
       "npm:@willsoto/node-konfig-core@5.0.0",
       "npm:@willsoto/node-konfig-file@3.0.0",
       "npm:@willsoto/node-konfig-toml-parser@3.0.0"

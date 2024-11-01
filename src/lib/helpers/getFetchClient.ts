@@ -6,14 +6,14 @@ export const getFetchClient = (konfigStore: Store): {
         client: Deno.HttpClient;
     }): Promise<Response>;
 } => {
-    if (konfigStore.get("networking.proxy")) {
+    if (Deno.env.get("PROXY") || konfigStore.get("networking.proxy")) {
         return async (
             input: RequestInfo | URL,
             init?: RequestInit,
         ) => {
             const client = Deno.createHttpClient({
                 proxy: {
-                    url: konfigStore.get("networking.proxy") as string,
+                    url: Deno.env.get("PROXY") || konfigStore.get("networking.proxy") as string,
                 },
             });
             const fetchRes = await fetch(input, {

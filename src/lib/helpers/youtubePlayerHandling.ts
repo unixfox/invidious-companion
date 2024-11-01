@@ -1,4 +1,5 @@
 import { Innertube, YT, ApiResponse } from "youtubei.js";
+import { generateRandomString } from "youtubei.js/Utils";
 import { compress, decompress } from "https://deno.land/x/brotli@0.1.7/mod.ts";
 import { youtubePlayerReq } from "youtubePlayerReq";
 import { Store } from "@willsoto/node-konfig-core";
@@ -28,7 +29,7 @@ export const youtubePlayerParsing = async (
         const video = new YT.VideoInfo(
             [youtubePlayerResponse],
             innertubeClient.actions,
-            "",
+            generateRandomString(16),
         );
 
         const streamingData = video.streaming_data;
@@ -89,7 +90,7 @@ export const youtubePlayerParsing = async (
             videoDetails,
             microformat,
             invidiousCompanion: {
-                "baseUrl": konfigStore.get("server.base_url") as string,
+                "baseUrl": Deno.env.get("SERVER_BASE_URL") || konfigStore.get("server.base_url") as string,
             },
         }))(videoData);
 

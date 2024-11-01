@@ -9,6 +9,7 @@ import { getFetchClient } from "../helpers/getFetchClient.ts";
 export const poTokenGenerate = async (
     innertubeClient: Innertube,
     konfigStore: Store<Record<string, unknown>>,
+    innertubeClientCache: UniversalCache
 ): Promise<Innertube> => {
     const requestKey = "O43z0dpjhgX20SCx4KAo";
 
@@ -62,7 +63,7 @@ export const poTokenGenerate = async (
         po_token: poTokenResult.poToken,
         visitor_data: visitorData,
         fetch: getFetchClient(konfigStore),
-        cache: new UniversalCache(true),
+        cache: innertubeClientCache,
         generate_session_locally: true,
     }));
 };

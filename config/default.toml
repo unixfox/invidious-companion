@@ -6,6 +6,9 @@ base_url = "http://localhost:8282"
 
 [cache]
 enabled = true
+# will get cached in /var/tmp/youtubei.js if you specify /var/tmp
+# you need to change the --allow-write from deno run too
+directory = "/var/tmp"
 
 [networking]
 #proxy = ""
