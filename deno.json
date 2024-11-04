@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-env --allow-sys=hostname --allow-write=/var/tmp/youtubei.js --watch src/main.ts",
+    "dev": "deno run --allow-net --allow-env --allow-sys=hostname --allow-read --allow-write=/var/tmp/youtubei.js --watch src/main.ts",
     "compile": "deno compile --output invidious_companion --allow-net --allow-env --allow-read --allow-sys=hostname --allow-write=/var/tmp/youtubei.js src/main.ts"
   },
   "imports": {

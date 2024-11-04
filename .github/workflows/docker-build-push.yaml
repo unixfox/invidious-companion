@@ -8,7 +8,7 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'  # Trigger on semantic version tags
     paths-ignore:
-      - 'Cargo.lock'
+      - '.gitignore'
       - 'LICENSE'
       - 'README.md'
       - 'docker-compose.yml'

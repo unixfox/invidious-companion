@@ -47,7 +47,7 @@ innertubeClient = await Innertube.create({
 });
 
 if (!innertubeClientOauthEnabled) {
-  if (innertubeClientOauthEnabled) {
+  if (innertubeClientJobPoTokenEnabled) {
     innertubeClient = await poTokenGenerate(
       innertubeClient,
       konfigStore,
@@ -58,7 +58,7 @@ if (!innertubeClientOauthEnabled) {
     "regenerate youtube session",
     konfigStore.get("jobs.youtube_session.frequency") as string,
     async () => {
-      if (innertubeClientOauthEnabled) {
+      if (innertubeClientJobPoTokenEnabled) {
         innertubeClient = await poTokenGenerate(
           innertubeClient,
           konfigStore,
