@@ -12,6 +12,8 @@ directory = "/var/tmp"
 
 [networking]
 #proxy = ""
+# Enable YouTube new video format UMP
+ump = false
 
 [jobs]
 

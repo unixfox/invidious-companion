@@ -53,7 +53,29 @@ dashManifest.get("/:videoId", async (c) => {
                         ) {
                             return true;
                         } else if (
-                            i.itag == Number(url.searchParams.get("itag")) &&
+                            url.searchParams.has("xtags")
+                        ) {
+                            if (
+                                i.itag ==
+                                    Number(url.searchParams.get("itag")) &&
+                                url.searchParams.get("xtags")?.includes(
+                                    i.language || "",
+                                ) &&
+                                i.is_drc === url.search.includes("drc")
+                            ) {
+                                return true;
+                            } else if (
+                                i.itag ==
+                                    Number(url.searchParams.get("itag")) &&
+                                i.is_drc === url.search.includes("drc")
+                            ) {
+                                return true;
+                            } else {
+                                return true;
+                            }
+                        } else if (
+                            i.itag ==
+                                Number(url.searchParams.get("itag")) &&
                             i.is_drc === url.search.includes("drc")
                         ) {
                             return true;
@@ -61,11 +83,19 @@ dashManifest.get("/:videoId", async (c) => {
                     });
                 if (selectedItagFormat) {
                     let dashUrl = new URL(selectedItagFormat[0].url as string);
+                    if (url.toString().includes("140")) {
+                        console.log(url.toString());
+                        console.log(dashUrl.toString());
+                        console.log(selectedItagFormat[0]);
+                    }
                     if (local) {
                         // Can't create URL type without host part
                         dashUrl =
                             (dashUrl.pathname + dashUrl.search + "&host=" +
                                 dashUrl.host) as unknown as URL;
+                        if (konfigStore.get("networking.ump") as boolean) {
+                            dashUrl = dashUrl + "&ump=1" as unknown as URL;
+                        }
                         return dashUrl;
                     } else {
                         return dashUrl;
