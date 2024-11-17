@@ -53,11 +53,11 @@ latestVersion.get("/", async (c) => {
         });
     } else if (selectedItagFormat) {
         const itagUrl = selectedItagFormat[0].url as string;
-        const urlToRedirect = new URL(itagUrl);
+        let urlToRedirect = new URL(itagUrl);
         if (local) {
-            return c.redirect(
-                urlToRedirect.pathname + urlToRedirect.search + "&host=" +
-                    urlToRedirect.host,
+            urlToRedirect = new URL(
+                urlToRedirect.pathname + urlToRedirect.search +
+                    "&host=" + urlToRedirect.host
             );
         }
         return c.redirect(urlToRedirect.toString());

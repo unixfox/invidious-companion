@@ -7,6 +7,7 @@ const videoPlaybackProxy = new Hono();
 
 videoPlaybackProxy.get("/", async (c) => {
     const { host, c: client } = c.req.query();
+    const rangeHeader = c.req.header("range") as string | undefined;
     const urlReq = new URL(c.req.url);
 
     if (host == undefined || !/[\w-]+.googlevideo.com/.test(host)) {
@@ -23,11 +24,14 @@ videoPlaybackProxy.get("/", async (c) => {
     // deno-lint-ignore prefer-const
     let queryParams = new URLSearchParams(urlReq.search);
     queryParams.delete("host");
-    queryParams.append("alr", "yes");
-    if (c.req.header("range")) {
+    // alr parameter is only for WEB/HTML5 clients
+    if (client.includes("WEB")) {
+        queryParams.append("alr", "yes");
+    }
+    if (rangeHeader) {
         queryParams.append(
             "range",
-            (c.req.header("range") as string).split("=")[1],
+            rangeHeader.split("=")[1],
         );
     }
 
@@ -74,23 +78,21 @@ videoPlaybackProxy.get("/", async (c) => {
         );
     }
 
+    let headersForResponse = {
+        "content-length": googlevideoResponse.headers.get("content-length") ||
+            "",
+        "access-control-allow-origin": "*",
+        "accept-ranges": googlevideoResponse.headers.get("accept-ranges") || "",
+        "cache-control": googlevideoResponse.headers.get("cache-control") || "",
+        "content-type": googlevideoResponse.headers.get("content-type") || "",
+        "expires": googlevideoResponse.headers.get("expires") || "",
+        "last-modified": googlevideoResponse.headers.get("last-modified") || "",
+    };
+
     return new Response(googlevideoResponse.body, {
-        status: googlevideoResponse.status,
+        status: rangeHeader ? 206 : googlevideoResponse.status,
         statusText: googlevideoResponse.statusText,
-        headers: {
-            "content-length":
-                googlevideoResponse.headers.get("content-length") || "",
-            "access-control-allow-origin": "*",
-            "accept-ranges": googlevideoResponse.headers.get("accept-ranges") ||
-                "",
-            "cache-control": googlevideoResponse.headers.get("cache-control") ||
-                "",
-            "content-type": googlevideoResponse.headers.get("content-type") ||
-                "",
-            "expires": googlevideoResponse.headers.get("expires") || "",
-            "last-modified": googlevideoResponse.headers.get("last-modified") ||
-                "",
-        },
+        headers: headersForResponse,
     });
 });
 
