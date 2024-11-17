@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { Innertube } from "youtubei.js";
+import { FormatUtils, Innertube } from "youtubei.js";
 import { HonoVariables } from "../../lib/types/HonoVariables.ts";
 import { Store } from "@willsoto/node-konfig-core";
 import {
@@ -42,39 +42,35 @@ dashManifest.get("/:videoId", async (c) => {
             .streaming_data.adaptive_formats
             .filter((i) => i.mime_type.includes("mp4"));
 
-        const dashFile = await videoInfo.toDash(
-            // @ts-ignore URL is the same type as URLTransformer
+        const player_response = videoInfo.page[0];
+        // TODO: fix include storyboards in DASH manifest file
+        //const storyboards = player_response.storyboards;
+        const captions = player_response.captions?.caption_tracks;
+
+        const dashFile = await FormatUtils.toDash(
+            videoInfo.streaming_data,
+            videoInfo.page[0].video_details?.is_post_live_dvr,
             (url: URL) => {
-                const selectedItagFormat = videoInfo.streaming_data
-                    ?.adaptive_formats?.filter((i) => {
-                        if (
-                            i.itag == Number(url.searchParams.get("itag")) &&
-                            i.is_drc === undefined
-                        ) {
-                            return true;
-                        } else if (
-                            i.itag == Number(url.searchParams.get("itag")) &&
-                            i.is_drc === url.search.includes("drc")
-                        ) {
-                            return true;
-                        }
-                    });
-                if (selectedItagFormat) {
-                    let dashUrl = new URL(selectedItagFormat[0].url as string);
-                    if (local) {
-                        // Can't create URL type without host part
-                        dashUrl =
-                            (dashUrl.pathname + dashUrl.search + "&host=" +
-                                dashUrl.host) as unknown as URL;
-                        if (konfigStore.get("networking.ump") as boolean) {
-                            dashUrl = dashUrl + "&ump=1" as unknown as URL;
-                        }
-                        return dashUrl;
-                    } else {
-                        return dashUrl;
+                let dashUrl = url;
+                if (local) {
+                    // Can't create URL type without host part
+                    dashUrl = (dashUrl.pathname + dashUrl.search + "&host=" +
+                        dashUrl.host) as unknown as URL;
+                    if (konfigStore.get("networking.ump") as boolean) {
+                        dashUrl = dashUrl + "&ump=1" as unknown as URL;
                     }
+                    return dashUrl;
+                } else {
+                    return dashUrl;
                 }
             },
+            undefined,
+            videoInfo.cpn,
+            undefined,
+            innertubeClient.actions,
+            undefined,
+            captions,
+            undefined,
         );
         return c.text(dashFile.replaceAll("&amp;", "&"));
     }

@@ -53,14 +53,13 @@ latestVersion.get("/", async (c) => {
         });
     } else if (selectedItagFormat) {
         const itagUrl = selectedItagFormat[0].url as string;
-        let urlToRedirect = new URL(itagUrl);
+        const itagUrlParsed = new URL(itagUrl);
+        let urlToRedirect = itagUrlParsed.toString();
         if (local) {
-            urlToRedirect = new URL(
-                urlToRedirect.pathname + urlToRedirect.search +
-                    "&host=" + urlToRedirect.host
-            );
+            urlToRedirect = itagUrlParsed.pathname + urlToRedirect.search +
+                "&host=" + itagUrlParsed.host;
         }
-        return c.redirect(urlToRedirect.toString());
+        return c.redirect(urlToRedirect);
     }
 });
 

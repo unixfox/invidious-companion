@@ -78,19 +78,18 @@ videoPlaybackProxy.get("/", async (c) => {
         );
     }
 
-    let headersForResponse = {
+    const headersForResponse = {
         "content-length": googlevideoResponse.headers.get("content-length") ||
             "",
         "access-control-allow-origin": "*",
         "accept-ranges": googlevideoResponse.headers.get("accept-ranges") || "",
-        "cache-control": googlevideoResponse.headers.get("cache-control") || "",
         "content-type": googlevideoResponse.headers.get("content-type") || "",
         "expires": googlevideoResponse.headers.get("expires") || "",
         "last-modified": googlevideoResponse.headers.get("last-modified") || "",
     };
 
     return new Response(googlevideoResponse.body, {
-        status: rangeHeader ? 206 : googlevideoResponse.status,
+        status: googlevideoResponse.status,
         statusText: googlevideoResponse.statusText,
         headers: headersForResponse,
     });

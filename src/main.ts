@@ -76,7 +76,7 @@ if (!innertubeClientOauthEnabled) {
   // Fired when waiting for the user to authorize the sign in attempt.
   innertubeClient.session.on("auth-pending", (data) => {
     console.log(
-      `Go to ${data.verification_url} in your browser and enter code ${data.user_code} to authenticate.`,
+      `[INFO] [OAUTH] Go to ${data.verification_url} in your browser and enter code ${data.user_code} to authenticate.`,
     );
   });
   // Fired when authentication is successful.
