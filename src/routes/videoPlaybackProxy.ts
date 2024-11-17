@@ -16,9 +16,14 @@ videoPlaybackProxy.get("/", async (c) => {
         });
     }
 
-    if (expire == undefined || Number(expire) < Number(Date.now().toString().slice(0, -3))){
+    if (
+        expire == undefined ||
+        Number(expire) < Number(Date.now().toString().slice(0, -3))
+    ) {
         throw new HTTPException(400, {
-            res: new Response("Expire query string undefined or videoplayback URL has expired."),
+            res: new Response(
+                "Expire query string undefined or videoplayback URL has expired.",
+            ),
         });
     }
 
