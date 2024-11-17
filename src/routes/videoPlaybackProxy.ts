@@ -6,13 +6,25 @@ import { HTTPException } from "hono/http-exception";
 const videoPlaybackProxy = new Hono();
 
 videoPlaybackProxy.get("/", async (c) => {
-    const { host, c: client } = c.req.query();
+    const { host, c: client, expire } = c.req.query();
     const rangeHeader = c.req.header("range") as string | undefined;
     const urlReq = new URL(c.req.url);
 
     if (host == undefined || !/[\w-]+.googlevideo.com/.test(host)) {
         throw new HTTPException(400, {
-            res: new Response("Host do not match or undefined."),
+            res: new Response("Host query string do not match or undefined."),
+        });
+    }
+
+    if (expire == undefined || Number(expire) < Number(Date.now().toString().slice(0, -3))){
+        throw new HTTPException(400, {
+            res: new Response("Expire query string undefined or videoplayback URL has expired."),
+        });
+    }
+
+    if (client == undefined) {
+        throw new HTTPException(400, {
+            res: new Response("'c' query string undefined."),
         });
     }
 
