@@ -38,9 +38,11 @@ dashManifest.get("/:videoId", async (c) => {
     c.header("content-type", "application/dash+xml");
 
     if (videoInfo.streaming_data) {
+        // Invidious force quality only support one video codec at a time, using av01.
+        // video.js only support MP4 not WEBM
         videoInfo.streaming_data.adaptive_formats = videoInfo
             .streaming_data.adaptive_formats
-            .filter((i) => i.mime_type.includes("mp4"));
+            .filter((i) => i.mime_type.includes("mp4") && i.mime_type.includes("av01"));
 
         const player_response = videoInfo.page[0];
         // TODO: fix include storyboards in DASH manifest file
