@@ -1,7 +1,9 @@
-import { Innertube, YT, ApiResponse } from "youtubei.js";
+import { ApiResponse, Innertube, YT } from "youtubei.js";
 import { generateRandomString } from "youtubei.js/Utils";
 import { compress, decompress } from "https://deno.land/x/brotli@0.1.7/mod.ts";
-const { youtubePlayerReq } = await import(Deno.env.get("YT_PLAYER_REQ_LOCATION") || "./youtubePlayerReq.ts");
+const { youtubePlayerReq } = await import(
+    Deno.env.get("YT_PLAYER_REQ_LOCATION") || "./youtubePlayerReq.ts"
+);
 import { Store } from "@willsoto/node-konfig-core";
 
 const kv = await Deno.openKv();
@@ -22,7 +24,7 @@ export const youtubePlayerParsing = async (
         const youtubePlayerResponse = await youtubePlayerReq(
             innertubeClient,
             videoId,
-            konfigStore
+            konfigStore,
         );
         const videoData = youtubePlayerResponse.data;
 
@@ -36,16 +38,26 @@ export const youtubePlayerParsing = async (
 
         // Modify the original YouTube response to include deciphered URLs
         if (streamingData && videoData && videoData.streamingData) {
-            const ecatcherServiceTracking = videoData.responseContext?.serviceTrackingParams.find(o => o.service === 'ECATCHER');
-            const clientNameUsed = ecatcherServiceTracking?.params?.find(o => o.key === 'client.name');
+            const ecatcherServiceTracking = videoData.responseContext
+                ?.serviceTrackingParams.find((o: { service: string }) =>
+                    o.service === "ECATCHER"
+                );
+            const clientNameUsed = ecatcherServiceTracking?.params?.find((
+                o: { key: string },
+            ) => o.key === "client.name");
             // no need to decipher on IOS nor ANDROID
-            if (!clientNameUsed?.value.includes("IOS") && !clientNameUsed?.value.includes("ANDROID")) {
+            if (
+                !clientNameUsed?.value.includes("IOS") &&
+                !clientNameUsed?.value.includes("ANDROID")
+            ) {
                 for (const [index, format] of streamingData.formats.entries()) {
-                    videoData.streamingData.formats[index].url = format.decipher(
-                        innertubeClient.session.player,
-                    );
+                    videoData.streamingData.formats[index].url = format
+                        .decipher(
+                            innertubeClient.session.player,
+                        );
                     if (
-                        videoData.streamingData.formats[index].signatureCipher !==
+                        videoData.streamingData.formats[index]
+                            .signatureCipher !==
                             undefined
                     ) {
                         delete videoData.streamingData.formats[index]
@@ -53,7 +65,8 @@ export const youtubePlayerParsing = async (
                     }
                 }
                 for (
-                    const [index, adaptive_format] of streamingData.adaptive_formats
+                    const [index, adaptive_format] of streamingData
+                        .adaptive_formats
                         .entries()
                 ) {
                     videoData.streamingData.adaptiveFormats[index].url =
@@ -90,11 +103,14 @@ export const youtubePlayerParsing = async (
             videoDetails,
             microformat,
             invidiousCompanion: {
-                "baseUrl": Deno.env.get("SERVER_BASE_URL") || konfigStore.get("server.base_url") as string,
+                "baseUrl": Deno.env.get("SERVER_BASE_URL") ||
+                    konfigStore.get("server.base_url") as string,
             },
         }))(videoData);
 
-        if (cacheEnabled == true && videoData.playabilityStatus?.status == "OK") {
+        if (
+            cacheEnabled == true && videoData.playabilityStatus?.status == "OK"
+        ) {
             (async () => {
                 await kv.set(
                     ["video_cache", videoId],
@@ -116,7 +132,7 @@ export const youtubePlayerParsing = async (
 
 export const youtubeVideoInfo = (
     innertubeClient: Innertube,
-    youtubePlayerResponseJson: object
+    youtubePlayerResponseJson: object,
 ): YT.VideoInfo => {
     const playerResponse = {
         success: true,
@@ -128,4 +144,4 @@ export const youtubeVideoInfo = (
         innertubeClient.actions,
         "",
     );
-}
+};
