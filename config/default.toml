@@ -1,7 +1,7 @@
 [server]
 port = 8282
 host = "127.0.0.1"
-hmac_key = "CHANGE_ME"
+secret_key = "CHANGE_ME"
 base_url = "http://localhost:8282"
 
 [cache]

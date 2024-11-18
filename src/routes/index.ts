@@ -14,7 +14,7 @@ export const routes = (app: Hono, konfigStore: Store<Record<string, unknown>>) =
   app.use(
     "/youtubei/v1/*",
     bearerAuth({
-      token: Deno.env.get("SERVER_HMAC_KEY") || konfigStore.get("server.hmac_key") as string,
+      token: Deno.env.get("SERVER_SECRET_KEY") || konfigStore.get("server.secret_key") as string,
     }),
   );
 

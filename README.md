@@ -9,5 +9,5 @@ Companion for Invidious which handle all the video stream retrieval from YouTube
 ## Run Locally
 
 ```
-SERVER_HMAC_KEY=CHANGEME deno task dev
+SERVER_SECRET_KEY=CHANGEME deno task dev
 ```
