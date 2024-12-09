@@ -1,5 +1,6 @@
 import { Innertube, ApiResponse } from "youtubei.js";
 import { Store } from "@willsoto/node-konfig-core";
+import NavigationEndpoint from "youtubei.js/NavigationEndpoint";
 
 export const youtubePlayerReq = async (innertubeClient: Innertube, videoId: string, konfigStore: Store): Promise<ApiResponse> => {
     const innertubeClientOauthEnabled = konfigStore.get(
@@ -10,11 +11,20 @@ export const youtubePlayerReq = async (innertubeClient: Innertube, videoId: stri
     if (innertubeClientOauthEnabled)
         innertubeClientUsed = "TV";
     
-    return await innertubeClient.actions.execute('/player', {
-          video_id: videoId,
-          // @ts-ignore Unable to import type InnerTubeClient
-          client: innertubeClientUsed,
-          sts: innertubeClient.session.player?.sts,
-          po_token: innertubeClient.session.po_token
-        });
+    const watch_endpoint = new NavigationEndpoint({ watchEndpoint: { videoId: videoId } });
+
+    return await watch_endpoint.call(innertubeClient.actions, {
+      playbackContext: {
+        contentPlaybackContext: {
+          vis: 0,
+          splay: false,
+          lactMilliseconds: '-1',
+          signatureTimestamp: innertubeClient.session.player?.sts
+        }
+      },
+      serviceIntegrityDimensions: {
+        poToken: innertubeClient.session.po_token
+      },
+      innertubeClientUsed
+    });
 };
