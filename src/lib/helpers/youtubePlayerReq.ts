@@ -25,6 +25,6 @@ export const youtubePlayerReq = async (innertubeClient: Innertube, videoId: stri
       serviceIntegrityDimensions: {
         poToken: innertubeClient.session.po_token
       },
-      innertubeClientUsed
+      client: innertubeClientUsed
     });
 };

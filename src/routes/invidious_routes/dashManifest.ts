@@ -44,7 +44,12 @@ dashManifest.get("/:videoId", async (c) => {
             .streaming_data.adaptive_formats
             .filter((i) => {
                 if (i.mime_type.includes("mp4")) {
-                    if (i.has_video) {
+                    if (
+                        i.has_video &&
+                        JSON.stringify(
+                            videoInfo.streaming_data?.adaptive_formats,
+                        ).includes("av01")
+                    ) {
                         if (i.mime_type.includes("av01")) {
                             return true;
                         } else {
