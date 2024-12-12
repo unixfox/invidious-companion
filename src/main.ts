@@ -3,7 +3,12 @@ import { routes } from "./routes/index.ts";
 import { Innertube, UniversalCache } from "youtubei.js";
 import { poTokenGenerate } from "./lib/jobs/potoken.ts";
 import { konfigLoader } from "./lib/helpers/konfigLoader.ts";
-const { getFetchClient } = await import(Deno.env.get("GET_FETCH_CLIENT_LOCATION") || "getFetchClient");
+let getFetchClientLocation = "getFetchClient";
+if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
+  getFetchClientLocation = import.meta.dirname + "/" +
+        Deno.env.get("GET_FETCH_CLIENT_LOCATION");
+}
+const { getFetchClient } = await import(getFetchClientLocation);
 
 const app = new Hono();
 const konfigStore = await konfigLoader();
