@@ -2,7 +2,7 @@ import { ApiResponse, Innertube, YT } from "youtubei.js";
 import { generateRandomString } from "youtubei.js/Utils";
 import { compress, decompress } from "https://deno.land/x/brotli@0.1.7/mod.ts";
 const { youtubePlayerReq } = await import(
-    Deno.env.get("YT_PLAYER_REQ_LOCATION") || "./youtubePlayerReq.ts"
+    Deno.env.get("YT_PLAYER_REQ_LOCATION") || "youtubePlayerReq"
 );
 import { Store } from "@willsoto/node-konfig-core";
 

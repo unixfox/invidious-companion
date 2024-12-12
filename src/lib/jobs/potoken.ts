@@ -3,7 +3,7 @@ import type { BgConfig } from "bgutils";
 import { JSDOM } from "jsdom";
 import { Innertube, UniversalCache } from "youtubei.js";
 import { Store } from "@willsoto/node-konfig-core";
-const { getFetchClient } = await import(Deno.env.get("GET_FETCH_CLIENT_LOCATION") || "../helpers/getFetchClient.ts");
+const { getFetchClient } = await import(Deno.env.get("GET_FETCH_CLIENT_LOCATION") || "getFetchClient");
 
 // Adapted from https://github.com/LuanRT/BgUtils/blob/main/examples/node/index.ts
 export const poTokenGenerate = async (

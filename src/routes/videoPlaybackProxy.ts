@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { Store } from "@willsoto/node-konfig-core";
-const { getFetchClient } = await import(Deno.env.get("GET_FETCH_CLIENT_LOCATION") || "../lib/helpers/getFetchClient.ts");
+const { getFetchClient } = await import(Deno.env.get("GET_FETCH_CLIENT_LOCATION") || "getFetchClient");
 import { HTTPException } from "hono/http-exception";
 
 const videoPlaybackProxy = new Hono();

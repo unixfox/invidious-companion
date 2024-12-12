@@ -17,6 +17,7 @@
     "@willsoto/node-konfig-file": "npm:@willsoto/node-konfig-file@3.0.0",
     "@willsoto/node-konfig-toml-parser": "npm:@willsoto/node-konfig-toml-parser@3.0.0",
     "youtubePlayerReq": "./src/lib/helpers/youtubePlayerReq.ts",
+    "getFetchClient": "./src/lib/helpers/getFetchClient.ts",
     "googlevideo": "npm:googlevideo@2.0.0"
   },
   "unstable": ["cron", "kv", "http"]
