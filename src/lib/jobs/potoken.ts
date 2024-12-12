@@ -6,7 +6,7 @@ import { Store } from "@willsoto/node-konfig-core";
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
     if (Deno.env.has("DENO_COMPILED")) {
-        getFetchClientLocation = Deno.mainModule.replace("main.ts", "") +
+        getFetchClientLocation = Deno.mainModule.replace("src/main.ts", "") +
             Deno.env.get("GET_FETCH_CLIENT_LOCATION");
     } else {
         getFetchClientLocation = Deno.env.get(

@@ -5,7 +5,7 @@ import { Store } from "@willsoto/node-konfig-core";
 let youtubePlayerReqLocation = "youtubePlayerReq";
 if (Deno.env.get("YT_PLAYER_REQ_LOCATION")) {
     if (Deno.env.has("DENO_COMPILED")) {
-        youtubePlayerReqLocation = Deno.mainModule.replace("main.ts", "") +
+        youtubePlayerReqLocation = Deno.mainModule.replace("src/main.ts", "") +
             Deno.env.get("YT_PLAYER_REQ_LOCATION");
     } else {
         youtubePlayerReqLocation = Deno.env.get(
