@@ -3,8 +3,14 @@ import { Store } from "@willsoto/node-konfig-core";
 import { HTTPException } from "hono/http-exception";
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
-  getFetchClientLocation = import.meta.dirname + "/" +
-        Deno.env.get("GET_FETCH_CLIENT_LOCATION");
+    if (Deno.env.has("DENO_COMPILED")) {
+        getFetchClientLocation = Deno.mainModule.replace("main.ts", "") +
+            Deno.env.get("GET_FETCH_CLIENT_LOCATION");
+    } else {
+        getFetchClientLocation = Deno.env.get(
+            "GET_FETCH_CLIENT_LOCATION",
+        ) as string;
+    }
 }
 const { getFetchClient } = await import(getFetchClientLocation);
 

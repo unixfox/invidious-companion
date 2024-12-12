@@ -5,8 +5,14 @@ import { Innertube, UniversalCache } from "youtubei.js";
 import { Store } from "@willsoto/node-konfig-core";
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
-  getFetchClientLocation = import.meta.dirname + "/" +
-        Deno.env.get("GET_FETCH_CLIENT_LOCATION");
+    if (Deno.env.has("DENO_COMPILED")) {
+        getFetchClientLocation = Deno.mainModule.replace("main.ts", "") +
+            Deno.env.get("GET_FETCH_CLIENT_LOCATION");
+    } else {
+        getFetchClientLocation = Deno.env.get(
+            "GET_FETCH_CLIENT_LOCATION",
+        ) as string;
+    }
 }
 const { getFetchClient } = await import(getFetchClientLocation);
 
@@ -14,7 +20,7 @@ const { getFetchClient } = await import(getFetchClientLocation);
 export const poTokenGenerate = async (
     innertubeClient: Innertube,
     konfigStore: Store<Record<string, unknown>>,
-    innertubeClientCache: UniversalCache
+    innertubeClientCache: UniversalCache,
 ): Promise<Innertube> => {
     const requestKey = "O43z0dpjhgX20SCx4KAo";
 
@@ -62,7 +68,7 @@ export const poTokenGenerate = async (
         bgConfig,
     });
 
-    await BG.PoToken.generatePlaceholder(visitorData);;
+    await BG.PoToken.generatePlaceholder(visitorData);
 
     return (await Innertube.create({
         po_token: poTokenResult.poToken,
