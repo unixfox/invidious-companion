@@ -7,11 +7,14 @@ import {
     youtubePlayerParsing,
     youtubeVideoInfo,
 } from "../../lib/helpers/youtubePlayerHandling.ts";
+import {
+    verifyRequest
+} from "../../lib/helpers/verifyRequest.ts";
 
 const latestVersion = new Hono<{ Variables: HonoVariables }>();
 
 latestVersion.get("/", async (c) => {
-    const { itag, id, local } = c.req.query();
+    const { check, itag, id, local } = c.req.query();
     c.header("access-control-allow-origin", "*");
 
     if (!id || !itag) {
@@ -25,6 +28,18 @@ latestVersion.get("/", async (c) => {
     const konfigStore = await c.get("konfigStore") as Store<
         Record<string, unknown>
     >;
+
+    if (konfigStore.get("server.verify_requests") && check == undefined) {
+        throw new HTTPException(400, {
+            res: new Response("No check ID."),
+        });
+    } else if (konfigStore.get("server.verify_requests") && check) {
+        if (verifyRequest(check, id, konfigStore) === false) {
+            throw new HTTPException(400, {
+                res: new Response("ID incorrect."),
+            });
+        }
+    }
 
     const youtubePlayerResponseJson = await youtubePlayerParsing(
         innertubeClient,

@@ -6,12 +6,16 @@ import {
     youtubePlayerParsing,
     youtubeVideoInfo,
 } from "../../lib/helpers/youtubePlayerHandling.ts";
+import {
+    verifyRequest
+} from "../../lib/helpers/verifyRequest.ts";
+import { HTTPException } from "hono/http-exception";
 
 const dashManifest = new Hono<{ Variables: HonoVariables }>();
 
 dashManifest.get("/:videoId", async (c) => {
     const { videoId } = c.req.param();
-    const { local } = c.req.query();
+    const { check, local } = c.req.query();
     c.header("access-control-allow-origin", "*");
 
     const innertubeClient = await c.get("innertubeClient") as Innertube;
@@ -19,6 +23,18 @@ dashManifest.get("/:videoId", async (c) => {
     const konfigStore = await c.get("konfigStore") as Store<
         Record<string, unknown>
     >;
+
+    if (konfigStore.get("server.verify_requests") && check == undefined) {
+        throw new HTTPException(400, {
+            res: new Response("No check ID."),
+        });
+    } else if (konfigStore.get("server.verify_requests") && check) {
+        if (verifyRequest(check, videoId, konfigStore) === false) {
+            throw new HTTPException(400, {
+                res: new Response("ID incorrect."),
+            });
+        }
+    }
 
     const youtubePlayerResponseJson = await youtubePlayerParsing(
         innertubeClient,
