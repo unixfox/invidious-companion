@@ -14,10 +14,10 @@ export const verifyRequest = (
     try {
         const decipher = new Ecb(
             Aes,
-            new TextEncoder().encode(
+            new TextEncoder().encode((
                 Deno.env.get("SERVER_SECRET_KEY") ||
-                    konfigStore.get("server.secret_key") as string,
-            ),
+                konfigStore.get("server.secret_key") as string
+            ).substring(0, 16)),
             Padding.PKCS7,
         );
 
@@ -32,7 +32,6 @@ export const verifyRequest = (
         }
         // only allow ID to live for 6 hours
         if ((timestampNow + 6 * 60 * 60) - parsedTimestampInt < 0) {
-            console.log("sup lol")
             return false;
         }
     } catch (_) {
