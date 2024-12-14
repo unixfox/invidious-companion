@@ -42,8 +42,7 @@ export const poTokenGenerate = async (
     });
 
     const bgConfig: BgConfig = {
-        fetch: (input: string | URL | globalThis.Request, init?: RequestInit) =>
-            fetch(input, init),
+        fetch: getFetchClient(konfigStore),
         globalObj: globalThis,
         identifier: visitorData,
         requestKey,
