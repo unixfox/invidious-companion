@@ -71,7 +71,7 @@ latestVersion.get("/", async (c) => {
         const itagUrlParsed = new URL(itagUrl);
         let urlToRedirect = itagUrlParsed.toString();
         if (local) {
-            urlToRedirect = itagUrlParsed.pathname + urlToRedirect.search +
+            urlToRedirect = itagUrlParsed.pathname + itagUrlParsed.search +
                 "&host=" + itagUrlParsed.host;
         }
         return c.redirect(urlToRedirect);
