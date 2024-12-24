@@ -6,7 +6,11 @@ Companion for Invidious which handle all the video stream retrieval from YouTube
 
 - [deno](https://docs.deno.com/runtime/)  
 
-## Run Locally
+## Documentation
+- Installation guide: https://docs.invidious.io/companion-installation/
+- Extra documentation for Invidious companion: https://github.com/iv-org/invidious-companion/wiki
+
+## Run Locally (development)
 
 ```
 SERVER_SECRET_KEY=CHANGEME deno task dev
