@@ -52,10 +52,6 @@ videoPlaybackProxy.get("/", async (c) => {
     // deno-lint-ignore prefer-const
     let queryParams = new URLSearchParams(urlReq.search);
     queryParams.delete("host");
-    // alr parameter is only for WEB/HTML5 clients
-    if (client.includes("WEB")) {
-        queryParams.append("alr", "yes");
-    }
     if (rangeHeader) {
         queryParams.append(
             "range",

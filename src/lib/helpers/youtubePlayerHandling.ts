@@ -77,6 +77,11 @@ export const youtubePlayerParsing = async (
                         delete videoData.streamingData.formats[index]
                             .signatureCipher;
                     }
+                    if (videoData.streamingData.formats[index].url.includes("alr=true")) {
+                        videoData.streamingData.formats[index].url.replace("alr=true", "alr=false");
+                    } else {
+                        videoData.streamingData.formats[index].url += "&alr=false";
+                    }
                 }
                 for (
                     const [index, adaptive_format] of streamingData
@@ -95,6 +100,11 @@ export const youtubePlayerParsing = async (
                     ) {
                         delete videoData.streamingData.adaptiveFormats[index]
                             .signatureCipher;
+                    }
+                    if (videoData.streamingData.adaptiveFormats[index].url.includes("alr=true")) {
+                        videoData.streamingData.adaptiveFormats[index].url.replace("alr=true", "alr=false");
+                    } else {
+                        videoData.streamingData.adaptiveFormats[index].url += "&alr=false";
                     }
                 }
             }
