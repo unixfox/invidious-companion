@@ -45,11 +45,6 @@ export const youtubePlayerParsing = async (
 
         const streamingData = video.streaming_data;
 
-        // WORKAROUND the issue with TV client not returning any short description
-        if (!videoData.videoDetails.shortDescription) {
-            videoData.videoDetails.shortDescription = "";
-        }
-
         // Modify the original YouTube response to include deciphered URLs
         if (streamingData && videoData && videoData.streamingData) {
             const ecatcherServiceTracking = videoData.responseContext
