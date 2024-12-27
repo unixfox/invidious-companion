@@ -32,6 +32,10 @@ ENV PORT=8282 \
 # Copy passwd file for the non-privileged user from the user-stage
 COPY --from=user-stage /etc/passwd /etc/passwd
 
+# Create cache directory and set correct permissions
+RUN mkdir -p /var/tmp/youtubei.js \
+    && chown -R appuser /var/tmp/youtubei.js
+
 # Set the working directory
 WORKDIR /app
 
