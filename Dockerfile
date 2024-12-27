@@ -4,6 +4,9 @@ ARG TINI_VERSION=0.19.0
 
 WORKDIR /app
 
+# cache dir for youtube.js library
+RUN mkdir -p /var/tmp/youtubei.js
+
 RUN apt update && apt install -y curl
 
 COPY ./src/ /app/src/
@@ -32,9 +35,8 @@ ENV PORT=8282 \
 # Copy passwd file for the non-privileged user from the user-stage
 COPY --from=user-stage /etc/passwd /etc/passwd
 
-# Create cache directory and set correct permissions
-RUN mkdir -p /var/tmp/youtubei.js \
-    && chown -R appuser /var/tmp/youtubei.js
+# Copy cache directory and set correct permissions
+COPY --from=builder --chown=appuser /var/tmp/youtubei.js /var/tmp/youtubei.js
 
 # Set the working directory
 WORKDIR /app
