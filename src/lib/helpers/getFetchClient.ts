@@ -2,9 +2,12 @@ import { Store } from "@willsoto/node-konfig-core";
 
 export const getFetchClient = (konfigStore: Store): {
     (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
-    (input: Request | URL | string, init?: RequestInit & {
-        client: Deno.HttpClient;
-    }): Promise<Response>;
+    (
+        input: Request | URL | string,
+        init?: RequestInit & {
+            client: Deno.HttpClient;
+        },
+    ): Promise<Response>;
     (input: URL | Request | string, init?: RequestInit): Promise<Response>;
 } => {
     if (Deno.env.get("PROXY") || konfigStore.get("networking.proxy")) {
@@ -14,7 +17,8 @@ export const getFetchClient = (konfigStore: Store): {
         ) => {
             const client = Deno.createHttpClient({
                 proxy: {
-                    url: Deno.env.get("PROXY") || konfigStore.get("networking.proxy") as string,
+                    url: Deno.env.get("PROXY") ||
+                        konfigStore.get("networking.proxy") as string,
                 },
             });
             const fetchRes = await fetch(input, {

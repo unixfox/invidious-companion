@@ -22,7 +22,11 @@ export const verifyRequest = (
         );
 
         const encryptedData = new TextDecoder().decode(
-            decipher.decrypt(decodeBase64(stringToCheck.replace(/-/g, "+").replace(/_/g, "/"))),
+            decipher.decrypt(
+                decodeBase64(
+                    stringToCheck.replace(/-/g, "+").replace(/_/g, "/"),
+                ),
+            ),
         );
         const [parsedTimestamp, parsedVideoId] = encryptedData.split("|");
         const parsedTimestampInt = parseInt(parsedTimestamp);

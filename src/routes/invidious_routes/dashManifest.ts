@@ -6,9 +6,7 @@ import {
     youtubePlayerParsing,
     youtubeVideoInfo,
 } from "../../lib/helpers/youtubePlayerHandling.ts";
-import {
-    verifyRequest
-} from "../../lib/helpers/verifyRequest.ts";
+import { verifyRequest } from "../../lib/helpers/verifyRequest.ts";
 import { HTTPException } from "hono/http-exception";
 
 const dashManifest = new Hono<{ Variables: HonoVariables }>();

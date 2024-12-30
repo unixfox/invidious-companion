@@ -7,9 +7,7 @@ import {
     youtubePlayerParsing,
     youtubeVideoInfo,
 } from "../../lib/helpers/youtubePlayerHandling.ts";
-import {
-    verifyRequest
-} from "../../lib/helpers/verifyRequest.ts";
+import { verifyRequest } from "../../lib/helpers/verifyRequest.ts";
 
 const latestVersion = new Hono<{ Variables: HonoVariables }>();
 

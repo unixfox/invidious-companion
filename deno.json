@@ -20,5 +20,10 @@
     "getFetchClient": "./src/lib/helpers/getFetchClient.ts",
     "googlevideo": "npm:googlevideo@2.0.0"
   },
-  "unstable": ["cron", "kv", "http"]
+  "unstable": ["cron", "kv", "http"],
+  "fmt": {
+    "options": {
+      "indentWidth": 4
+    }
+  }
 }

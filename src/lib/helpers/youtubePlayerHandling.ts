@@ -72,8 +72,15 @@ export const youtubePlayerParsing = async (
                         delete videoData.streamingData.formats[index]
                             .signatureCipher;
                     }
-                    if (videoData.streamingData.formats[index].url.includes("alr=yes")) {
-                        videoData.streamingData.formats[index].url.replace("alr=yes", "alr=no");
+                    if (
+                        videoData.streamingData.formats[index].url.includes(
+                            "alr=yes",
+                        )
+                    ) {
+                        videoData.streamingData.formats[index].url.replace(
+                            "alr=yes",
+                            "alr=no",
+                        );
                     } else {
                         videoData.streamingData.formats[index].url += "&alr=no";
                     }
@@ -96,10 +103,15 @@ export const youtubePlayerParsing = async (
                         delete videoData.streamingData.adaptiveFormats[index]
                             .signatureCipher;
                     }
-                    if (videoData.streamingData.adaptiveFormats[index].url.includes("alr=yes")) {
-                        videoData.streamingData.adaptiveFormats[index].url.replace("alr=yes", "alr=no");
+                    if (
+                        videoData.streamingData.adaptiveFormats[index].url
+                            .includes("alr=yes")
+                    ) {
+                        videoData.streamingData.adaptiveFormats[index].url
+                            .replace("alr=yes", "alr=no");
                     } else {
-                        videoData.streamingData.adaptiveFormats[index].url += "&alr=no";
+                        videoData.streamingData.adaptiveFormats[index].url +=
+                            "&alr=no";
                     }
                 }
             }
