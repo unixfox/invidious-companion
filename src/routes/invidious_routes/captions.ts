@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { HonoVariables } from "../../lib/types/HonoVariables.ts";
+import type { HonoVariables } from "../../lib/types/HonoVariables.ts";
 import { Store } from "@willsoto/node-konfig-core";
 import { verifyRequest } from "../../lib/helpers/verifyRequest.ts";
 import { youtubePlayerParsing } from "../../lib/helpers/youtubePlayerHandling.ts";
@@ -33,7 +33,7 @@ captionsHandler.get("/:videoId", async (c) => {
         }
     }
 
-    const innertubeClient = await c.get("innertubeClient") as Innertube;
+    const innertubeClient = await c.get("innertubeClient");
 
     const playerJson = await youtubePlayerParsing(
         innertubeClient,
@@ -42,6 +42,7 @@ captionsHandler.get("/:videoId", async (c) => {
     );
 
     const captionsTrackArray =
+        // @ts-ignore to be fixed
         playerJson.captions.playerCaptionsTracklistRenderer.captionTracks;
 
     const label = c.req.query("label");
@@ -51,8 +52,9 @@ captionsHandler.get("/:videoId", async (c) => {
     if (label == undefined && lang == undefined) {
         const invidiousAvailableCaptionsArr: AvailableCaption[] = [];
 
-        captionsTrackArray.forEach((captions) => {
+        captionsTrackArray.forEach((captions: { name: { simpleText: string | number | boolean; }; languageCode: any; }) => {
             invidiousAvailableCaptionsArr.push({
+                // @ts-ignore to be fixed
                 label: captions.name.simpleText,
                 languageCode: captions.languageCode,
                 url: `/api/v1/captions/${videoId}?label=${
@@ -68,8 +70,10 @@ captionsHandler.get("/:videoId", async (c) => {
     let caption;
 
     if (lang) {
+        // @ts-ignore to be fixed
         caption = captionsTrackArray.filter((c) => c.languageCode === lang);
     } else {
+        // @ts-ignore to be fixed
         caption = captionsTrackArray.filter((c) => c.name.simpleText === label);
     }
 

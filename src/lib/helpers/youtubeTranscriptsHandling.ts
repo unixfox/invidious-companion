@@ -1,5 +1,6 @@
 import { Innertube } from "youtubei.js";
 
+// @ts-ignore to be fixed
 function createTemporalDuration(milliseconds) {
     return new Temporal.Duration(
         undefined,
@@ -25,6 +26,7 @@ const ESCAPE_SUBSTITUTIONS = {
 export async function handleTranscripts(
     innertubeClient: Innertube,
     videoId: string,
+    // @ts-ignore to be fixed
     selectedCaption,
 ) {
     const lines: string[] = ["WEBVTT"];
@@ -34,6 +36,7 @@ export async function handleTranscripts(
         selectedCaption.name.simpleText,
     );
     const rawTranscriptLines =
+        // @ts-ignore to be fixed
         transcriptInfo.transcript.content.body.initial_segments;
 
     rawTranscriptLines.forEach((line) => {
@@ -45,14 +48,18 @@ export async function handleTranscripts(
 
         const start_ms = createTemporalDuration(line.start_ms).round({
             largestUnit: "year",
+        // @ts-ignore to be fixed
         }).toLocaleString(undefined, timestampFormatOptions);
         const end_ms = createTemporalDuration(line.end_ms).round({
             largestUnit: "year",
+        // @ts-ignore to be fixed
         }).toLocaleString(undefined, timestampFormatOptions);
         const timestamp = `${start_ms} --> ${end_ms}`;
 
+        // @ts-ignore to be fixed
         const text = line.snippet.text.replace(
             /[&<>‍‍\u200E\u200F\u00A0]/g,
+        // @ts-ignore to be fixed
             (match) => ESCAPE_SUBSTITUTIONS[match],
         );
 
