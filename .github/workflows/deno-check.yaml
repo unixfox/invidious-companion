@@ -19,6 +19,9 @@ jobs:
 
       - name: Verify formatting
         run: deno fmt --check src/**
+
+      - name: Verify typing
+        run: deno check src/**
       
       - name: Run linter
         run: deno lint
