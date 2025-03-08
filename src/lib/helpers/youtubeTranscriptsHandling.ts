@@ -48,18 +48,18 @@ export async function handleTranscripts(
 
         const start_ms = createTemporalDuration(line.start_ms).round({
             largestUnit: "year",
-        // @ts-ignore to be fixed
+            // @ts-ignore to be fixed
         }).toLocaleString(undefined, timestampFormatOptions);
         const end_ms = createTemporalDuration(line.end_ms).round({
             largestUnit: "year",
-        // @ts-ignore to be fixed
+            // @ts-ignore to be fixed
         }).toLocaleString(undefined, timestampFormatOptions);
         const timestamp = `${start_ms} --> ${end_ms}`;
 
         // @ts-ignore to be fixed
         const text = line.snippet.text.replace(
             /[&<>‍‍\u200E\u200F\u00A0]/g,
-        // @ts-ignore to be fixed
+            // @ts-ignore to be fixed
             (match) => ESCAPE_SUBSTITUTIONS[match],
         );
 

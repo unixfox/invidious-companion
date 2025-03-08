@@ -52,16 +52,23 @@ captionsHandler.get("/:videoId", async (c) => {
     if (label == undefined && lang == undefined) {
         const invidiousAvailableCaptionsArr: AvailableCaption[] = [];
 
-        captionsTrackArray.forEach((captions: { name: { simpleText: string | number | boolean; }; languageCode: any; }) => {
-            invidiousAvailableCaptionsArr.push({
-                // @ts-ignore to be fixed
-                label: captions.name.simpleText,
-                languageCode: captions.languageCode,
-                url: `/api/v1/captions/${videoId}?label=${
-                    encodeURIComponent(captions.name.simpleText)
-                }`,
-            });
-        });
+        captionsTrackArray.forEach(
+            (
+                captions: {
+                    name: { simpleText: string | number | boolean };
+                    languageCode: any;
+                },
+            ) => {
+                invidiousAvailableCaptionsArr.push({
+                    // @ts-ignore to be fixed
+                    label: captions.name.simpleText,
+                    languageCode: captions.languageCode,
+                    url: `/api/v1/captions/${videoId}?label=${
+                        encodeURIComponent(captions.name.simpleText)
+                    }`,
+                });
+            },
+        );
 
         return c.json({ captions: invidiousAvailableCaptionsArr });
     }
