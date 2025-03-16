@@ -2,6 +2,7 @@ import { ApiResponse, Innertube, YT } from "youtubei.js";
 import { generateRandomString } from "youtubei.js/Utils";
 import { compress, decompress } from "https://deno.land/x/brotli@0.1.7/mod.ts";
 import { Store } from "@willsoto/node-konfig-core";
+import type { BG } from "bgutils";
 let youtubePlayerReqLocation = "youtubePlayerReq";
 if (Deno.env.get("YT_PLAYER_REQ_LOCATION")) {
     if (Deno.env.has("DENO_COMPILED")) {
@@ -17,23 +18,34 @@ const { youtubePlayerReq } = await import(youtubePlayerReqLocation);
 
 const kv = await Deno.openKv();
 
-export const youtubePlayerParsing = async (
-    innertubeClient: Innertube,
-    videoId: string,
-    konfigStore: Store,
-): Promise<object> => {
-    const cacheEnabled = konfigStore.get("cache.enabled");
+export const youtubePlayerParsing = async ({
+    innertubeClient,
+    videoId,
+    konfigStore,
+    tokenMinter,
+    overrideCache = false,
+}: {
+    innertubeClient: Innertube;
+    videoId: string;
+    konfigStore: Store;
+    tokenMinter: BG.WebPoMinter;
+    overrideCache?: boolean;
+}): Promise<object> => {
+    const cacheEnabled = overrideCache
+        ? false
+        : konfigStore.get("cache.enabled");
 
     const videoCached = (await kv.get(["video_cache", videoId]))
         .value as Uint8Array;
 
-    if (videoCached != null && cacheEnabled == true) {
+    if (videoCached != null && cacheEnabled) {
         return JSON.parse(new TextDecoder().decode(decompress(videoCached)));
     } else {
         const youtubePlayerResponse = await youtubePlayerReq(
             innertubeClient,
             videoId,
             konfigStore,
+            tokenMinter,
         );
         const videoData = youtubePlayerResponse.data;
 
@@ -135,9 +147,7 @@ export const youtubePlayerParsing = async (
             microformat,
         }))(videoData);
 
-        if (
-            cacheEnabled == true && videoData.playabilityStatus?.status == "OK"
-        ) {
+        if (cacheEnabled && videoData.playabilityStatus?.status == "OK") {
             (async () => {
                 await kv.set(
                     ["video_cache", videoId],

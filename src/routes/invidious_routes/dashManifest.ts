@@ -29,11 +29,12 @@ dashManifest.get("/:videoId", async (c) => {
         }
     }
 
-    const youtubePlayerResponseJson = await youtubePlayerParsing(
+    const youtubePlayerResponseJson = await youtubePlayerParsing({
         innertubeClient,
         videoId,
         konfigStore,
-    );
+        tokenMinter: c.get("tokenMinter"),
+    });
     const videoInfo = youtubeVideoInfo(
         innertubeClient,
         youtubePlayerResponseJson,
