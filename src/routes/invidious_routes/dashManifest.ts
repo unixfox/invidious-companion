@@ -103,7 +103,7 @@ dashManifest.get("/:videoId", async (c) => {
             captions,
             undefined,
         );
-        return c.body(dashFile.replaceAll("&amp;", "&"));
+        return c.body(dashFile);
     }
 });
 
