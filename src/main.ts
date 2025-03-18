@@ -8,6 +8,7 @@ import type { HonoVariables } from "./lib/types/HonoVariables.ts";
 
 import { parseConfig } from "./lib/helpers/config.ts";
 const config = await parseConfig();
+import { Metrics } from "./lib/helpers/metrics.ts";
 
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
@@ -26,6 +27,7 @@ declare module "hono" {
     interface ContextVariableMap extends HonoVariables {}
 }
 const app = new Hono();
+const metrics = config.server.enable_metrics ? new Metrics() : undefined;
 
 let tokenMinter: TokenMinter;
 let innertubeClient: Innertube;
@@ -59,6 +61,7 @@ if (!innertubeClientOauthEnabled) {
             poTokenGenerate.bind(
                 poTokenGenerate,
                 config,
+                metrics,
             ),
             { minTimeout: 1_000, maxTimeout: 60_000, multiplier: 5, jitter: 0 },
         ));
@@ -69,9 +72,15 @@ if (!innertubeClientOauthEnabled) {
         { backoffSchedule: [5_000, 15_000, 60_000, 180_000] },
         async () => {
             if (innertubeClientJobPoTokenEnabled) {
-                ({ innertubeClient, tokenMinter } = await poTokenGenerate(
-                    config,
-                ));
+                try {
+                    ({ innertubeClient, tokenMinter } = await poTokenGenerate(
+                        config,
+                        metrics,
+                    ));
+                } catch (err) {
+                    metrics?.potokenGenerationFailure.inc();
+                    throw err;
+                }
             } else {
                 innertubeClient = await Innertube.create({
                     enable_session_cache: false,
@@ -108,12 +117,33 @@ app.use("*", async (c, next) => {
     c.set("innertubeClient", innertubeClient);
     c.set("tokenMinter", tokenMinter);
     c.set("config", config);
+    c.set("metrics", metrics);
     await next();
 });
 
 routes(app, config);
 
-Deno.serve({
-    port: config.server.port,
-    hostname: config.server.host,
-}, app.fetch);
+export function run(signal: AbortSignal, port: number, hostname: string) {
+    return Deno.serve(
+        { signal: signal, port: port, hostname: hostname },
+        app.fetch,
+    );
+}
+
+if (import.meta.main) {
+    const controller = new AbortController();
+    const { signal } = controller;
+    run(signal, config.server.port, config.server.host);
+
+    Deno.addSignalListener("SIGTERM", () => {
+        console.log("Caught SIGINT, shutting down...");
+        controller.abort();
+        Deno.exit(0);
+    });
+
+    Deno.addSignalListener("SIGINT", () => {
+        console.log("Caught SIGINT, shutting down...");
+        controller.abort();
+        Deno.exit(0);
+    });
+}

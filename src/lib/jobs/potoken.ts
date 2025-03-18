@@ -4,6 +4,7 @@ import {
     youtubeVideoInfo,
 } from "../helpers/youtubePlayerHandling.ts";
 import type { Config } from "../helpers/config.ts";
+import { Metrics } from "../helpers/metrics.ts";
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
     if (Deno.env.has("DENO_COMPILED")) {
@@ -58,6 +59,7 @@ export type TokenMinter = ReturnType<typeof createMinter>;
 // Adapted from https://github.com/LuanRT/BgUtils/blob/main/examples/node/index.ts
 export const poTokenGenerate = (
     config: Config,
+    metrics: Metrics | undefined,
 ): Promise<{ innertubeClient: Innertube; tokenMinter: TokenMinter }> => {
     const { promise, resolve, reject } = Promise.withResolvers<
         Awaited<ReturnType<typeof poTokenGenerate>>
@@ -105,6 +107,7 @@ export const poTokenGenerate = (
                     instantiatedInnertubeClient,
                     config,
                     integrityTokenBasedMinter: minter,
+                    metrics,
                 });
                 console.log("Successfully generated PO token");
                 const numberToKill = workers.length - 1;
@@ -133,10 +136,12 @@ async function checkToken({
     instantiatedInnertubeClient,
     config,
     integrityTokenBasedMinter,
+    metrics,
 }: {
     instantiatedInnertubeClient: Innertube;
     config: Config;
     integrityTokenBasedMinter: TokenMinter;
+    metrics: Metrics | undefined,
 }) {
     const fetchImpl = getFetchClient(config);
 
@@ -159,6 +164,7 @@ async function checkToken({
             videoId: video.id,
             config,
             tokenMinter: integrityTokenBasedMinter,
+            metrics,
             overrideCache: true,
         });
         const videoInfo = youtubeVideoInfo(
