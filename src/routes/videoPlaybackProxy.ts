@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { encodeRFC5987ValueChars } from "../lib/helpers/encodeRFC5987ValueChars.ts";
+
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
     if (Deno.env.has("DENO_COMPILED")) {
@@ -16,7 +18,7 @@ const { getFetchClient } = await import(getFetchClientLocation);
 const videoPlaybackProxy = new Hono();
 
 videoPlaybackProxy.get("/", async (c) => {
-    const { host, c: client, expire } = c.req.query();
+    const { host, c: client, expire, title } = c.req.query();
     const urlReq = new URL(c.req.url);
 
     if (host == undefined || !/[\w-]+.googlevideo.com/.test(host)) {
@@ -47,6 +49,8 @@ videoPlaybackProxy.get("/", async (c) => {
     // deno-lint-ignore prefer-const
     let queryParams = new URLSearchParams(urlReq.search);
     queryParams.delete("host");
+    queryParams.delete("title");
+
     const rangeHeader = c.req.header("range");
     const requestBytes = rangeHeader ? rangeHeader.split("=")[1] : null;
     if (requestBytes) {
@@ -108,6 +112,12 @@ videoPlaybackProxy.get("/", async (c) => {
         "expires": googlevideoResponse.headers.get("expires") || "",
         "last-modified": googlevideoResponse.headers.get("last-modified") || "",
     };
+
+    if (title) {
+        headersForResponse["content-disposition"] = `attachment; filename="${
+            encodeURIComponent(title)
+        }"; filename*=UTF-8''${encodeRFC5987ValueChars(title)}`;
+    }
 
     let responseStatus = googlevideoResponse.status;
     if (requestBytes && responseStatus == 200) {
