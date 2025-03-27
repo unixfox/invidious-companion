@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { encodeRFC5987ValueChars } from "../lib/helpers/encodeRFC5987ValueChars.ts";
+import { decryptQuery } from "../lib/helpers/encryptQuery.ts";
 
 let getFetchClientLocation = "getFetchClient";
 if (Deno.env.get("GET_FETCH_CLIENT_LOCATION")) {
@@ -20,6 +21,20 @@ const videoPlaybackProxy = new Hono();
 videoPlaybackProxy.get("/", async (c) => {
     const { host, c: client, expire, title } = c.req.query();
     const urlReq = new URL(c.req.url);
+    const config = c.get("config");
+    const queryParams = new URLSearchParams(urlReq.search);
+
+    if (c.req.query("enc") === "true") {
+        const { data: encryptedQuery } = c.req.query();
+        const decryptedQueryParams = decryptQuery(encryptedQuery, config);
+        const parsedDecryptedQueryParams = new URLSearchParams(
+            JSON.parse(decryptedQueryParams),
+        );
+        queryParams.delete("enc");
+        queryParams.delete("data");
+        queryParams.set("pot", parsedDecryptedQueryParams.get("pot") as string);
+        queryParams.set("ip", parsedDecryptedQueryParams.get("ip") as string);
+    }
 
     if (host == undefined || !/[\w-]+.googlevideo.com/.test(host)) {
         throw new HTTPException(400, {
@@ -44,10 +59,6 @@ videoPlaybackProxy.get("/", async (c) => {
         });
     }
 
-    const config = c.get("config");
-
-    // deno-lint-ignore prefer-const
-    let queryParams = new URLSearchParams(urlReq.search);
     queryParams.delete("host");
     queryParams.delete("title");
 
