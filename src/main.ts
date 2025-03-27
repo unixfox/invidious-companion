@@ -35,10 +35,7 @@ const innertubeClientOauthEnabled = config.youtube_session.oauth_enabled;
 const innertubeClientJobPoTokenEnabled =
     config.jobs.youtube_session.po_token_enabled;
 const innertubeClientCookies = config.youtube_session.cookies;
-let innertubeClientCache = new UniversalCache(
-    true,
-    `${config.cache.directory}/youtubei.js/`,
-) as UniversalCache;
+const innertubeClientCache = new UniversalCache(false);
 
 Deno.env.set("TMPDIR", config.cache.directory);
 
@@ -50,9 +47,6 @@ if (!innertubeClientOauthEnabled) {
     } else if (!innertubeClientJobPoTokenEnabled) {
         console.log("[INFO] job po_token is NOT active.");
     }
-} else if (innertubeClientOauthEnabled) {
-    // Can't use cache if using OAuth#cacheCredentials
-    innertubeClientCache = new UniversalCache(false);
 }
 
 innertubeClient = await Innertube.create({
@@ -71,7 +65,7 @@ if (!innertubeClientOauthEnabled) {
                 poTokenGenerate,
                 innertubeClient,
                 config,
-                innertubeClientCache as UniversalCache,
+                innertubeClientCache,
             ),
             { minTimeout: 1_000, maxTimeout: 60_000, multiplier: 5, jitter: 0 },
         ));
