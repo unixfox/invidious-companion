@@ -7,6 +7,8 @@ import { retry } from "@std/async";
 import type { BG } from "bgutils";
 import type { HonoVariables } from "./lib/types/HonoVariables.ts";
 
+console.log(Deno.env.has("SERVER_SECRET_KEY"));
+
 import { parseConfig } from "./lib/helpers/config.ts";
 const config = await parseConfig();
 
@@ -123,7 +125,13 @@ app.use("*", async (c, next) => {
 
 routes(app, config);
 
-Deno.serve({
-    port: config.server.port,
-    hostname: config.server.host,
-}, app.fetch);
+export function run() {
+    return Deno.serve({
+        port: config.server.port,
+        hostname: config.server.host,
+    }, app.fetch);
+}
+
+if (import.meta.main) {
+    run();
+}
