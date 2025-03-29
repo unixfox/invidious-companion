@@ -29,11 +29,14 @@ jobs:
       - name: Run linter
         run: deno lint
 
-      - name: Install and run tor
-        uses: tor-actions/setup-tor@main
-        with:
-          daemon: true
-          port: 9150
+      # - name: Install and run tor
+      #   uses: tor-actions/setup-tor@main
+      #   with:
+      #     daemon: true
+      #     port: 9150
+
+      # - name: Run linter
+      #   run: bash src/tests/wait_tor_ready.sh
 
       - name: Run tests
-        run: PROXY=socks5://127.0.0.1:9150 deno task test
+        run: deno task test
