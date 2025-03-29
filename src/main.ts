@@ -135,9 +135,15 @@ if (import.meta.main) {
     const { signal } = controller;
     run(signal, config.server.port, config.server.host);
 
-    Deno.addSignalListener("SIGINT", async () => {
+    Deno.addSignalListener("SIGTERM", () => {
         console.log("Caught SIGINT, shutting down...");
-        await controller.abort(); // Gracefully shut down server
-        Deno.exit(0); // Ensure zero exit code
+        controller.abort();
+        Deno.exit(0);
+    });
+
+    Deno.addSignalListener("SIGINT", () => {
+        console.log("Caught SIGINT, shutting down...");
+        controller.abort();
+        Deno.exit(0);
     });
 }
