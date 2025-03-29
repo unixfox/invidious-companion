@@ -6,13 +6,11 @@ export function latestVersion(baseUrl: string) {
             `${baseUrl}/latest_version?id=jNQXAC9IVRw&itag=18&local=true`,
             {
                 method: "GET",
-                headers: {
-                    "content-range": "bytes=0-500",
-                },
+                redirect: "manual",
             },
         );
 
         await resp.body?.cancel();
-        assertEquals(resp.status, 200);
+        assertEquals(resp.status, 302);
     });
 }

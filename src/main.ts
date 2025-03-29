@@ -7,8 +7,6 @@ import { retry } from "@std/async";
 import type { BG } from "bgutils";
 import type { HonoVariables } from "./lib/types/HonoVariables.ts";
 
-console.log(Deno.env.has("SERVER_SECRET_KEY"));
-
 import { parseConfig } from "./lib/helpers/config.ts";
 const config = await parseConfig();
 
