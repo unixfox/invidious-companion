@@ -33,7 +33,9 @@ jobs:
         uses: tor-actions/setup-tor@main
         with:
           daemon: true
-          port: 9050
+          port: 9150
+          config: |
+            ExitNodes {us}
 
       - name: Run tests x4 times (IP may be banned)
         uses: nick-fields/retry@v3
@@ -42,7 +44,6 @@ jobs:
           max_attempts: 4
           command: |
             pkill -HUP tor
-            sleep 5s
-            curl --socks5 localhost:9050 https://check.torproject.org/api/ip
-            rm -rf /var/tmp/youtubei.js/
-            PROXY=socks5://localhost:9050 deno task test
+            curl -s --socks5 localhost:9150 https://check.torproject.org/api/ip; echo 
+            rm -rf /var/tmp/youtubei.js
+            PROXY=socks5://localhost:9150 deno task test
