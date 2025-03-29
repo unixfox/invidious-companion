@@ -34,8 +34,6 @@ jobs:
         with:
           daemon: true
           port: 9150
-          config: |
-            ExitNodes {us}
 
       - name: Run tests x4 times (IP may be banned)
         uses: nick-fields/retry@v3
