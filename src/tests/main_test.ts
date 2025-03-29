@@ -20,7 +20,7 @@ Deno.test({
         );
 
         await t.step(
-            "Check if it can generate a valid URL for latest_version",
+            "Check if it can get an OK playabilityStatus on /youtubei/v1/player",
             youtubePlayer.bind(null, baseUrl, headers),
         );
 
