@@ -3,6 +3,9 @@ name: Linter
 on:
   pull_request:
     branches: [master]
+  push:
+    branches:
+      - add-tests  # Trigger on pushes to master branch
 
 jobs:
   lint:
@@ -25,3 +28,15 @@ jobs:
       
       - name: Run linter
         run: deno lint
+
+      - name: Install tor and run Tor for testing companion
+        uses: tor-actions/setup-tor@main
+        with:
+          daemon: true
+          port: 9150
+
+      - name: Launch Invidious companion in local
+        run: |
+          SERVER_SECRET_KEY=aaaaaaaaaaaaaaaa PROXY=socks5://127.0.0.1:9150 deno task dev &
+          timeout 22 bash -c 'until printf "" 2>>/dev/null >>/dev/tcp/$0/$1; do sleep 1; done' 127.0.0.1 8282
+          curl -v "http://localhost:8282/latest_version?id=XcNm-JF0n74&itag=18&local=true"
