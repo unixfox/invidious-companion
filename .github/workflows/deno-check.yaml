@@ -38,7 +38,7 @@ jobs:
       - name: Run tests x4 times (IP may be banned)
         uses: nick-fields/retry@v3
         with:
-          timeout_minutes: 10
+          timeout_minutes: 5
           max_attempts: 4
           command: |
             pkill -HUP tor
