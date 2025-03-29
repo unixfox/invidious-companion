@@ -10,6 +10,6 @@ export function dashManifest(baseUrl: string) {
         );
 
         await resp.body?.cancel();
-        assertEquals(resp.status, 200);
+        assertEquals(resp.status, 200, "response status code is not 200");
     });
 }

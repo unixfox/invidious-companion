@@ -13,17 +13,17 @@ export function youtubePlayer(
             }),
         });
 
-        assertEquals(resp.status, 200);
+        assertEquals(resp.status, 200, "response status code is not 200");
 
         const youtubeV1Player = await resp.json();
 
         assertEquals(
-            youtubeV1Player.playabilityStatus.status,
+            youtubeV1Player.playabilityStatus?.status,
             "OK",
             "playabilityStatus is not OK",
         );
         assertEquals(
-            youtubeV1Player.videoDetails.videoId,
+            youtubeV1Player.videoDetails?.videoId,
             "jNQXAC9IVRw",
             "videoDetails is not jNQXAC9IVRw",
         );
@@ -32,7 +32,7 @@ export function youtubePlayer(
             "adaptiveFormats is not present",
         );
         assert(
-            youtubeV1Player.streamingData.adaptiveFormats.length > 0,
+            youtubeV1Player.streamingData?.adaptiveFormats.length > 0,
             "adaptiveFormats is empty",
         );
     });

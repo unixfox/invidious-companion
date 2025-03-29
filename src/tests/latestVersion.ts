@@ -11,6 +11,6 @@ export function latestVersion(baseUrl: string) {
         );
 
         await resp.body?.cancel();
-        assertEquals(resp.status, 302);
+        assertEquals(resp.status, 302, "response status code is not 302");
     });
 }
