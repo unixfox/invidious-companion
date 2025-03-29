@@ -123,13 +123,21 @@ app.use("*", async (c, next) => {
 
 routes(app, config);
 
-export function run() {
-    return Deno.serve({
-        port: config.server.port,
-        hostname: config.server.host,
-    }, app.fetch);
+export function run(signal: AbortSignal, port: number, hostname: string) {
+    return Deno.serve(
+        { signal: signal, port: port, hostname: hostname },
+        app.fetch,
+    );
 }
 
 if (import.meta.main) {
-    run();
+    const controller = new AbortController();
+    const { signal } = controller;
+    run(signal, config.server.port, config.server.host);
+
+    Deno.addSignalListener("SIGINT", async () => {
+        console.log("Caught SIGINT, shutting down...");
+        await controller.abort(); // Gracefully shut down server
+        Deno.exit(0); // Ensure zero exit code
+    });
 }
