@@ -44,6 +44,6 @@ jobs:
           max_attempts: 4
           command: |
             pkill -HUP tor
-            curl -s --socks5 localhost:9150 https://check.torproject.org/api/ip; echo 
+            curl -s --socks5 127.0.0.1:9150 https://check.torproject.org/api/ip; echo 
             rm -rf /var/tmp/youtubei.js
-            PROXY=socks5://localhost:9150 deno task test
+            PROXY=socks5://127.0.0.1:9150 deno task test
