@@ -3,9 +3,6 @@ name: Linter
 on:
   pull_request:
     branches: [master]
-  push:
-    branches:
-      - add-tests  # Trigger on pushes to master branch
 
 jobs:
   lint:
