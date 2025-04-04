@@ -1,7 +1,7 @@
 import { BG, buildURL, GOOG_API_KEY, USER_AGENT } from "bgutils";
 import type { WebPoSignalOutput } from "bgutils";
 import { JSDOM } from "jsdom";
-import { Innertube, UniversalCache } from "youtubei.js";
+import { Innertube } from "youtubei.js";
 import {
     youtubePlayerParsing,
     youtubeVideoInfo,
@@ -24,7 +24,6 @@ const { getFetchClient } = await import(getFetchClientLocation);
 export const poTokenGenerate = async (
     innertubeClient: Innertube,
     config: Config,
-    innertubeClientCache: UniversalCache,
 ): Promise<{ innertubeClient: Innertube; tokenMinter: BG.WebPoMinter }> => {
     if (innertubeClient.session.po_token) {
         innertubeClient = await Innertube.create({
@@ -131,7 +130,6 @@ export const poTokenGenerate = async (
         po_token: sessionPoToken,
         visitor_data: visitorData,
         fetch: getFetchClient(config),
-        cache: innertubeClientCache,
         generate_session_locally: true,
     });
 

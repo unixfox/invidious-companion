@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { routes } from "./routes/index.ts";
-import { Innertube, UniversalCache } from "youtubei.js";
+import { Innertube } from "youtubei.js";
 import { poTokenGenerate } from "./lib/jobs/potoken.ts";
 import { USER_AGENT } from "bgutils";
 import { retry } from "@std/async";
@@ -35,9 +35,6 @@ const innertubeClientOauthEnabled = config.youtube_session.oauth_enabled;
 const innertubeClientJobPoTokenEnabled =
     config.jobs.youtube_session.po_token_enabled;
 const innertubeClientCookies = config.youtube_session.cookies;
-const innertubeClientCache = new UniversalCache(false);
-
-Deno.env.set("TMPDIR", config.cache.directory);
 
 if (!innertubeClientOauthEnabled) {
     if (innertubeClientJobPoTokenEnabled) {
@@ -51,7 +48,6 @@ if (!innertubeClientOauthEnabled) {
 
 innertubeClient = await Innertube.create({
     enable_session_cache: false,
-    cache: innertubeClientCache,
     retrieve_player: innertubeClientFetchPlayer,
     fetch: getFetchClient(config),
     cookie: innertubeClientCookies || undefined,
@@ -65,7 +61,6 @@ if (!innertubeClientOauthEnabled) {
                 poTokenGenerate,
                 innertubeClient,
                 config,
-                innertubeClientCache,
             ),
             { minTimeout: 1_000, maxTimeout: 60_000, multiplier: 5, jitter: 0 },
         ));
@@ -79,12 +74,10 @@ if (!innertubeClientOauthEnabled) {
                 ({ innertubeClient, tokenMinter } = await poTokenGenerate(
                     innertubeClient,
                     config,
-                    innertubeClientCache,
                 ));
             } else {
                 innertubeClient = await Innertube.create({
                     enable_session_cache: false,
-                    cache: innertubeClientCache,
                     fetch: getFetchClient(config),
                     retrieve_player: innertubeClientFetchPlayer,
                     user_agent: USER_AGENT,
