@@ -109,7 +109,7 @@ export const poTokenGenerate = (
                     integrityTokenBasedMinter: minter,
                     metrics,
                 });
-                console.log("Successfully generated PO token");
+                console.log("[INFO] Successfully generated PO token");
                 const numberToKill = workers.length - 1;
                 for (let i = 0; i < numberToKill; i++) {
                     const workerToKill = workers.shift();
@@ -120,7 +120,7 @@ export const poTokenGenerate = (
                     tokenMinter: minter,
                 });
             } catch (err) {
-                console.log("Failed to get valid PO token, will retry", {
+                console.log("[WARN] Failed to get valid PO token, will retry", {
                     err,
                 });
                 worker.terminate();
