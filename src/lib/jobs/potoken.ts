@@ -100,6 +100,7 @@ export const poTokenGenerate = (
                     visitor_data: parsedMessage.visitorData,
                     fetch: getFetchClient(config),
                     generate_session_locally: true,
+                    cookie: config.youtube_session.cookies || undefined,
                 });
                 const minter = createMinter(worker);
                 // check token from minter
