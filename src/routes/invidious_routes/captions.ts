@@ -89,6 +89,7 @@ captionsHandler.get("/:videoId", async (c) => {
     if (filterSelected.length == 0) throw new HTTPException(404);
 
     c.header("Content-Type", "text/vtt; charset=UTF-8");
+    c.header("Access-Control-Allow-Origin", "*");
     return c.body(
         await handleTranscripts(innertubeClient, videoId, filterSelected[0]),
     );
