@@ -82,10 +82,9 @@ jobs:
         with:
           path: artifacts
 
-      - name: Upload to latest release
-        uses: softprops/action-gh-release@v2
+      - uses: ncipollo/release-action@v1
         with:
-          files: artifacts/**
-          overwrite: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          removeArtifacts: true
+          allowUpdates: true
+          artifacts: artifacts/**
