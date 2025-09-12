@@ -3,7 +3,6 @@ name: Rolling Release Binaries
 on:
   push:
     branches:
-      - main
       - master
   workflow_dispatch:
 
@@ -84,7 +83,9 @@ jobs:
 
       - uses: ncipollo/release-action@v1
         with:
-          tag: latest
+          tag: ${{ github.ref_name }}
           removeArtifacts: true
           allowUpdates: true
           artifacts: artifacts/**
+          body: |
+            Binaries from ${{ github.ref_name }} branch.
