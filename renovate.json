@@ -1,95 +1,56 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "timezone": "Etc/UTC",
-  "schedule": ["at any time"],
   "labels": ["dependencies"],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Update Deno std library dependencies in import maps",
-      "fileMatch": ["^deno\\.jsonc?$"],
-      "matchStrings": [
-        "\"@std/(?<depName>[^\"]+)\": \"jsr:@std/[^@]+@(?<currentValue>[^\"]+)\""
-      ],
-      "datasourceTemplate": "deno",
-      "packageNameTemplate": "std/{{{depName}}}",
-      "registryUrlTemplate": "https://jsr.io"
-    },
-    {
-      "customType": "regex",
-      "description": "Update JSR dependencies in import maps",
-      "fileMatch": ["^deno\\.jsonc?$"],
-      "matchStrings": [
-        "\"(?<depName>[^\"]+)\": \"jsr:@(?<packageName>[^@]+)@(?<currentValue>[^\"]+)\""
-      ],
-      "datasourceTemplate": "deno",
-      "registryUrlTemplate": "https://jsr.io"
-    },
-    {
-      "customType": "regex",
-      "description": "Update Deno.land/x dependencies in import maps",
-      "fileMatch": ["^deno\\.jsonc?$"],
-      "matchStrings": [
-        "\"(?<depName>[^\"]+)\": \"https://deno\\.land/x/(?<packageName>[^@]+)@v?(?<currentValue>[^/\"]+)"
-      ],
-      "datasourceTemplate": "github-tags",
-      "packageNameTemplate": "denoland/deno_std"
-    },
-    {
-      "customType": "regex",
-      "description": "Update npm dependencies in import maps",
-      "fileMatch": ["^deno\\.jsonc?$"],
-      "matchStrings": [
-        "\"(?<depName>[^\"]+)\": \"npm:(?<packageName>[^@]+)@(?<currentValue>[^\"]+)\""
-      ],
-      "datasourceTemplate": "npm"
-    },
-    {
-      "customType": "regex",
-      "description": "Update direct URL imports in TypeScript files",
-      "fileMatch": ["\\.tsx?$"],
-      "matchStrings": [
-        "from [\"']https://deno\\.land/x/(?<depName>[^@/]+)@v?(?<currentValue>[^/\"']+)"
-      ],
-      "datasourceTemplate": "github-tags",
-      "packageNameTemplate": "denoland/{{{depName}}}"
-    },
-    {
-      "customType": "regex",
-      "description": "Update JSR imports in TypeScript files",
-      "fileMatch": ["\\.tsx?$"],
-      "matchStrings": [
-        "from [\"']jsr:@(?<packageName>[^@]+)@(?<currentValue>[^\"']+)"
-      ],
-      "datasourceTemplate": "deno",
-      "registryUrlTemplate": "https://jsr.io"
-    }
-  ],
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 2,
+  "timezone": "UTC",
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "matchDatasources": ["deno"],
-      "rangeStrategy": "pin"
+      "matchManagers": ["deno"],
+      "groupName": "Deno JSR packages",
+      "matchPackagePrefixes": ["jsr:@std/", "jsr:@hono/", "jsr:@luanrt/"]
     },
     {
-      "matchPackagePatterns": ["^@std/"],
-      "groupName": "Deno std library",
-      "automerge": true,
-      "automergeType": "pr",
-      "automergeStrategy": "squash"
+      "matchManagers": ["deno"],
+      "groupName": "YouTube.js updates",
+      "matchPackageNames": [
+        "youtubei.js",
+        "youtubei.js/Utils",
+        "youtubei.js/NavigationEndpoint", 
+        "youtubei.js/PlayerCaptionsTracklist"
+      ]
     },
     {
-      "matchDatasources": ["npm"],
-      "matchPackagePatterns": ["^npm:"],
-      "groupName": "npm dependencies"
+      "matchManagers": ["deno"],
+      "groupName": "ESM.sh packages",
+      "matchPackagePrefixes": ["https://esm.sh/"]
+    },
+    {
+      "matchManagers": ["deno"],
+      "groupName": "Deno.land packages", 
+      "matchPackagePrefixes": ["https://deno.land/"]
+    },
+    {
+      "matchManagers": ["deno"],
+      "groupName": "NPM packages",
+      "matchPackagePrefixes": ["npm:"]
+    },
+    {
+      "matchManagers": ["deno"],
+      "groupName": "CDN packages",
+      "matchPackagePrefixes": ["https://cdn.jsdelivr.net/"]
     }
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 4am on Monday"]
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**"
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
   },
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Dependency Dashboard",
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2
+  "osvVulnerabilityAlerts": true
 }
