@@ -28,3 +28,4 @@ jobs:
           token: '${{ steps.get_token.outputs.token }}'
         env:
           RENOVATE_REPOSITORIES: 'unixfox/invidious-companion'
+          LOG_LEVEL: debug
