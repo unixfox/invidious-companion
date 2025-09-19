@@ -1,0 +1,95 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Etc/UTC",
+  "schedule": ["at any time"],
+  "labels": ["dependencies"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Deno std library dependencies in import maps",
+      "fileMatch": ["^deno\\.jsonc?$"],
+      "matchStrings": [
+        "\"@std/(?<depName>[^\"]+)\": \"jsr:@std/[^@]+@(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "deno",
+      "packageNameTemplate": "std/{{{depName}}}",
+      "registryUrlTemplate": "https://jsr.io"
+    },
+    {
+      "customType": "regex",
+      "description": "Update JSR dependencies in import maps",
+      "fileMatch": ["^deno\\.jsonc?$"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \"jsr:@(?<packageName>[^@]+)@(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "deno",
+      "registryUrlTemplate": "https://jsr.io"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Deno.land/x dependencies in import maps",
+      "fileMatch": ["^deno\\.jsonc?$"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \"https://deno\\.land/x/(?<packageName>[^@]+)@v?(?<currentValue>[^/\"]+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "denoland/deno_std"
+    },
+    {
+      "customType": "regex",
+      "description": "Update npm dependencies in import maps",
+      "fileMatch": ["^deno\\.jsonc?$"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \"npm:(?<packageName>[^@]+)@(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Update direct URL imports in TypeScript files",
+      "fileMatch": ["\\.tsx?$"],
+      "matchStrings": [
+        "from [\"']https://deno\\.land/x/(?<depName>[^@/]+)@v?(?<currentValue>[^/\"']+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "denoland/{{{depName}}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Update JSR imports in TypeScript files",
+      "fileMatch": ["\\.tsx?$"],
+      "matchStrings": [
+        "from [\"']jsr:@(?<packageName>[^@]+)@(?<currentValue>[^\"']+)"
+      ],
+      "datasourceTemplate": "deno",
+      "registryUrlTemplate": "https://jsr.io"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["deno"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "matchPackagePatterns": ["^@std/"],
+      "groupName": "Deno std library",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash"
+    },
+    {
+      "matchDatasources": ["npm"],
+      "matchPackagePatterns": ["^npm:"],
+      "groupName": "npm dependencies"
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 4am on Monday"]
+  },
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Dependency Dashboard",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2
+}
