@@ -5,6 +5,23 @@
 // for the target version (.camoufox.linux[<arch>].version = "vX.Y.Z-release");
 // keep that parsing in lockstep. (version.json is the generated install
 // marker, written by install() below.)
+//
+// Why this runs at container START instead of just unzipping in the Dockerfile:
+// CAMOUFOX_INSTALL_DIR (/var/tmp/youtubei.js/camoufox) lives inside the rw
+// bind-mounted volume declared in docker-compose.yaml, and the container runs
+// with `read_only: true`. So:
+//   - Unzipping into that path at build time is useless: the runtime bind mount
+//     shadows the image layer, and bind mounts (unlike named volumes) are never
+//     seeded from the image, so the path is empty/host-provided at runtime.
+//   - The volume is the only writable location (read-only rootfs), so the
+//     browser can only be materialized at runtime, into the volume.
+//
+// This binary also creates the writable scratch dirs (home/tmp/xdg-cache/
+// xdg-data) the empty volume lacks, and re-extracts on a version.json mismatch.
+// Alternative (not chosen): bake the unzipped browser into a non-volume image
+// path (e.g. /opt/camoufox, read-only is fine since Firefox writes only to its
+// profile) and move the scratch-dir mkdirs into the app — at the cost of a
+// larger image and losing the persistent-volume browser cache.
 package main
 
 import (
