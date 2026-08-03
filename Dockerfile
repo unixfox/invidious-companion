@@ -33,6 +33,13 @@ WORKDIR /src
 COPY ./docker/camoufox-bootstrap.go ./main.go
 RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /camoufox-bootstrap ./main.go
 
+# Create the non-privileged appuser in a stage that has useradd; its
+# /etc/passwd and /etc/group are copied into the shell-less final image so the
+# runtime UID/GID (10001, matching docker-compose `user: 10001:10001`) resolves
+# to a real named user instead of an anonymous UID.
+FROM dependabot-debian AS user-stage
+RUN groupadd --gid 10001 appuser && \
+    useradd --uid 10001 --gid 10001 --no-create-home appuser
 
 # Stage for downloading files using curl from Debian
 FROM dependabot-debian AS debian-curl
@@ -187,6 +194,10 @@ COPY --from=camoufox-runtime /etc/fonts/ /etc/fonts/
 COPY --from=camoufox-runtime /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=camoufox-runtime /var/cache/fontconfig/ /var/cache/fontconfig/
 
+# Named non-privileged user, so the runtime USER 10001:10001 maps to appuser.
+COPY --from=user-stage /etc/passwd /etc/passwd
+COPY --from=user-stage /etc/group /etc/group
+
 COPY --from=thc-bin /thc /thc
 COPY --from=tini-bin /tini /tini
 COPY --from=bootstrap-builder /camoufox-bootstrap /camoufox-bootstrap
@@ -221,7 +232,7 @@ ENV SERVER_BASE_PATH=/companion \
 COPY ./config/ ./config/
 
 # Switch to non-privileged user
-USER 10001:10001
+USER appuser
 
 ENTRYPOINT ["/tini", "--", "/camoufox-bootstrap"]
 CMD ["/app/invidious_companion"]
