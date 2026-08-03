@@ -191,7 +191,6 @@ COPY --from=thc-bin /thc /thc
 COPY --from=tini-bin /tini /tini
 COPY --from=bootstrap-builder /camoufox-bootstrap /camoufox-bootstrap
 COPY --from=camoufox-download --chown=10001:10001 /camoufox.zip /usr/share/invidious-companion/camoufox.zip
-COPY --chmod=0444 ./docker/ldd /usr/bin/ldd
 
 # Copy cache directory and set correct permissions
 COPY --from=builder --chown=10001:10001 /var/tmp/youtubei.js /var/tmp/youtubei.js
