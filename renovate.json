@@ -7,6 +7,7 @@
     ":automergeDigest"
   ],
   "timezone": "UTC",
+  "schedule": ["0 0 * * 6"],
   "assignees": ["unixfox"],
   "reviewers": ["unixfox"],
   "minimumReleaseAge": "3 days",
@@ -49,14 +50,12 @@
       "description": "Auto-merge patch updates for GitHub Actions",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
       "automergeType": "pr"
     },
     {
       "description": "Auto-merge patch updates for Docker",
       "matchManagers": ["dockerfile"],
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
       "automergeType": "pr"
     }
   ]
